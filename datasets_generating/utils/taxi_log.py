@@ -1,6 +1,6 @@
 import datetime
 
-from location import random_location, relative_location, distance
+from .location import random_location, relative_location, distance
 
 DIS_OFFSET_SCALE = 0.05
 
