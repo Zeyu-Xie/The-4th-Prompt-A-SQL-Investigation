@@ -1,10 +1,12 @@
+import datetime
 import numpy as np
 import os
 import pandas as pd
 
-from utils.citizen import *
-from utils.guard_log import *
-from utils.id_card import *
+from utils.citizen import random_citizen
+from utils.guard_log import random_guard_log, random_exp_seconds
+from utils.id_card import random_id_cards
+from utils.system_audit import generate_all_system_audits
 
 TABLES_DIR = os.path.join(os.path.dirname(__file__), "tables")
 CURRENT_DATETIME = datetime.datetime(2077, 6, 28, 14, 57, 3)
@@ -35,3 +37,8 @@ while log_time < CURRENT_DATETIME:
     log_time += datetime.timedelta(seconds=random_exp_seconds(EXP_SCALE))
 guard_logs_pd = pd.DataFrame(data=guard_logs)
 guard_logs_pd.to_csv(os.path.join(TABLES_DIR, "guard_logs.csv"), index=False)
+
+# system_audits.csv
+system_audits = generate_all_system_audits(date=CURRENT_DATE)
+system_audits_pd = pd.DataFrame(data=system_audits)
+system_audits_pd.to_csv(os.path.join(TABLES_DIR, "system_audits.csv"), index=False)
