@@ -1,7 +1,7 @@
 import datetime
 import numpy as np
 
-from utils.location import *
+from utils.location import random_location
 
 RNG_SEED = 42
 ARR_EVENTS = [
