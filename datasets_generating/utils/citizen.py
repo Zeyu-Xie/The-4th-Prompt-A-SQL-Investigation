@@ -5,7 +5,6 @@ import numpy as np
 RNG_SEED = 42
 FAKER_SEED = 42
 AREA_CODE = "en_US"
-TODAY_DATE = datetime.date(2077, 6, 28)
 AGE_DAY_FROM = 1
 AGE_DAY_TO = 365 * 91
 SOCIAL_CREDIT_LOC = 50.0
@@ -16,16 +15,18 @@ fake = Faker(AREA_CODE)
 Faker.seed(FAKER_SEED)
 
 
-def random_birthday(age_day_from: int, age_day_to: int) -> datetime.date:
+def random_birthday(
+    age_day_from: int, age_day_to: int, current_date: datetime.date
+) -> datetime.date:
     age_day = int(rng.integers(age_day_from, age_day_to))
-    birthday = TODAY_DATE - datetime.timedelta(days=age_day)
+    birthday = current_date - datetime.timedelta(days=age_day)
     return birthday
 
 
-def calc_age_year(birthday: datetime.time) -> int:
-    n = TODAY_DATE.year - birthday.year
-    if TODAY_DATE.month < birthday.month or (
-        TODAY_DATE.month == birthday.month and TODAY_DATE.day < birthday.day
+def calc_age_year(birthday: datetime.date, current_date: datetime.date) -> int:
+    n = current_date.year - birthday.year
+    if current_date.month < birthday.month or (
+        current_date.month == birthday.month and current_date.day < birthday.day
     ):
         return n - 1
     return n
@@ -56,11 +57,13 @@ def random_social_credit(loc: float, scale: float) -> int:
     return raw
 
 
-def random_citizen() -> object:
+def random_citizen(current_date: datetime.date) -> object:
 
     # Time and ID
-    birthday = random_birthday(age_day_from=AGE_DAY_FROM, age_day_to=AGE_DAY_TO)
-    age_year = calc_age_year(birthday)
+    birthday = random_birthday(
+        age_day_from=AGE_DAY_FROM, age_day_to=AGE_DAY_TO, current_date=current_date
+    )
+    age_year = calc_age_year(birthday, current_date=current_date)
     id = random_id(birthday)
 
     # Name and sex
