@@ -12,6 +12,7 @@ from utils.camera_log import (
     random_camera_log_without_energy_center,
     random_camera_log_with_energy_center,
 )
+from utils.system_audit_inner import generate_all_system_audits_inner
 
 RNG_SEED = 42
 TABLES_DIR = os.path.join(os.path.dirname(__file__), "tables")
@@ -209,3 +210,17 @@ camera_logs_pd.sort_values(by="datetime", inplace=True)
 camera_logs_pd["id"] = np.arange(camera_logs_pd.shape[0]) + 1
 camera_logs_pd.to_csv(os.path.join(TABLES_DIR, "camera_logs.csv"), index=False)
 print("Number of camera logs:", camera_logs_pd.shape[0])
+
+# system_audits_inner.csv
+system_audits_inner = generate_all_system_audits_inner()
+system_audits_inner_pd = pd.DataFrame(system_audits_inner)
+system_audits_inner_pd.astype({"parent_id": int})
+system_audits_inner_pd["id"] += 1
+system_audits_inner_pd["parent_id"] += 1
+system_audits_inner_pd.iloc[:91, system_audits_inner_pd.columns.get_loc("sha-256")] = (
+    system_audits_pd["content"].values
+)
+system_audits_inner_pd.to_csv(
+    os.path.join(TABLES_DIR, "system_audits_inner.csv"), index=False
+)
+print("Number of inner system audits:", system_audits_inner_pd.shape[0])
