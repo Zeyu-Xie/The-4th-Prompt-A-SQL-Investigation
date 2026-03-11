@@ -40,6 +40,10 @@ id_cards = []
 for citizen in citizens:
     id_cards.extend(random_id_cards(citizen_id=citizen["id"]))
 id_cards_pd = pd.DataFrame(data=id_cards)
+special_id_cards_pd = pd.read_csv(os.path.join(SEEDS_DIR, "special_id_cards.csv"))
+id_cards_pd = pd.concat([id_cards_pd, special_id_cards_pd], ignore_index=True)
+id_cards_pd = id_cards_pd.astype({"card_id": str})
+id_cards_pd.sort_values(by="card_id", inplace=True)
 id_cards_pd.to_csv(os.path.join(TABLES_DIR, "id_cards.csv"), index=False)
 print("Number of ID cards:", id_cards_pd.shape[0])
 
