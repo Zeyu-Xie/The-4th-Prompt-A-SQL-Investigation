@@ -11,7 +11,12 @@ def get_sha256(text):
 
 
 # Lines
-with open(os.path.join(os.path.dirname(__file__), "system_audit.txt"), "r") as f:
+with open(
+    os.path.join(
+        os.path.dirname(os.path.dirname(__file__)), "seeds", "system_audit.txt"
+    ),
+    "r",
+) as f:
     lines = f.readlines()
 lines = np.array([line[:-1] for line in lines])
 
