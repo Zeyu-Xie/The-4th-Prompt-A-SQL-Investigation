@@ -20,7 +20,7 @@ for i in range(N):
     camera.update(random_camera())
     cameras.append(camera)
 cameras_pd = pd.DataFrame(data=cameras)
-cameras_pd = cameras_pd.groupby("address").head(5)
+cameras_pd = cameras_pd.groupby("address").head(2)
 cameras_pd.sort_values(by="address", inplace=True)
 cameras_pd["id"] = np.arange(cameras_pd.shape[0]) + 1
-cameras_pd.to_csv(os.path.join(SEED_DIR, "camera.csv"), index=False)
+cameras_pd.to_csv(os.path.join(SEED_DIR, "cameras.csv"), index=False)
