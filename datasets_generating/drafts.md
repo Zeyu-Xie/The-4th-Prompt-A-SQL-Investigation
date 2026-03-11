@@ -4,8 +4,8 @@
 
 | ID           | First Name | Last Name  | Sex    | Birthday   | Age  | Social Credit | Note              |
 | ------------ | ---------- | ---------- | ------ | ---------- | ---- | ------------- | ----------------- |
-| 202703042077 | Grant      | Harrington | male   | 2027-03-04 | 52   | 73            | mayer             |
-| 202707159623 | Vivian     | Harrington | female | 2027-07-15 | 51   | 68            | mayer's wife      |
+| 202703042077 | Grant      | Harrington | male   | 2027-03-04 | 50   | 73            | mayer             |
+| 202707159623 | Vivian     | Harrington | female | 2027-07-15 | 49   | 68            | mayer's wife      |
 | 205304281105 | Eleanor    | Harrington | female | 2053-04-28 | 24   | 60            | mayer's daughter  |
 | 205709098848 | Blaine     | Harrington | male   | 2057-09-09 | 19   | 21            | mayer's son       |
 | 205303014013 | Adrian     | Locke      | male   | 2053-03-01 | 24   | 62            | me, data engineer |
@@ -42,8 +42,6 @@ timeline
   Section 2070-03-20 to 2077-03-20
   	Every Season: Promot Meeting + Prompts Injected
 ```
-
-
 
 ### Stage 2 - Malicious Prompt Injected & Mayer's Son Killed
 
