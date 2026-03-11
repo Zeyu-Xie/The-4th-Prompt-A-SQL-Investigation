@@ -32,7 +32,7 @@ citizens_pd = citizens_pd.astype({"id": str})
 citizens_pd.sort_values(by="id", ignore_index=True, inplace=True)
 citizens_pd.to_csv(os.path.join(TABLES_DIR, "citizens.csv"), index=False)
 print("Number of Citizens:", citizens_pd.shape[0])
-print("Citizen ID Duplicate:", citizens_pd.duplicated().any())
+print("Has Citizen ID Duplicate:", citizens_pd.duplicated().any())
 citizens = citizens_pd.to_dict(orient="records")
 
 # id_cards.csv
@@ -98,4 +98,10 @@ while log_time < CURRENT_DATETIME:
     id += 1
     log_time += datetime.timedelta(seconds=random_exp_seconds(EXP_SCALE))
 taxi_logs_pd = pd.DataFrame(data=taxi_logs)
+special_taxi_logs_pd = pd.read_csv(os.path.join(SEEDS_DIR, "special_taxi_log.csv"))
+taxi_logs_pd = pd.concat([taxi_logs_pd, special_taxi_logs_pd], ignore_index=True)
+taxi_logs_pd = taxi_logs_pd.astype({"trip_time": str})
+taxi_logs_pd.sort_values(by="trip_time", inplace=True)
+taxi_logs_pd["trip_id"] = np.arange(taxi_logs_pd.shape[0])
 taxi_logs_pd.to_csv(os.path.join(TABLES_DIR, "taxi_logs.csv"), index=False)
+print("Number of taxi logs:", taxi_logs_pd.shape[0])
