@@ -58,6 +58,11 @@ while log_time < CURRENT_DATETIME:
     id += 1
     log_time += datetime.timedelta(seconds=random_exp_seconds(EXP_SCALE))
 guard_logs_pd = pd.DataFrame(data=guard_logs)
+special_guard_logs_pd = pd.read_csv(os.path.join(SEEDS_DIR, "special_guard_logs.csv"))
+guard_logs_pd = pd.concat([guard_logs_pd, special_guard_logs_pd], ignore_index=True)
+guard_logs_pd = guard_logs_pd.astype({"datetime": str})
+guard_logs_pd.sort_values(by="datetime", inplace=True)
+guard_logs_pd["id"] = np.arange(guard_logs_pd.shape[0]) + 1
 guard_logs_pd.to_csv(os.path.join(TABLES_DIR, "guard_logs.csv"), index=False)
 print("Number of guard logs:", guard_logs_pd.shape[0])
 
