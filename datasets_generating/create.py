@@ -8,7 +8,10 @@ from utils.guard_log import random_guard_log, random_exp_seconds
 from utils.id_card import random_id_cards
 from utils.system_audit import generate_all_system_audits, get_sha256
 from utils.taxi_log import random_taxi_log
-from utils.camera_log import random_camera_log_without_energy_center
+from utils.camera_log import (
+    random_camera_log_without_energy_center,
+    random_camera_log_with_energy_center,
+)
 
 RNG_SEED = 42
 TABLES_DIR = os.path.join(os.path.dirname(__file__), "tables")
@@ -160,7 +163,9 @@ print("Number of taxi logs:", taxi_logs_pd.shape[0])
 
 # camera_logs.csv
 CAMERA_LOG_START_DATETIME = datetime.datetime(2077, 1, 1, 0, 3, 22)
-CAMERA_LOG_EXP_SCALE = 600
+CAMERA_LOG_END_DATETIME_ENERGY_CENTER = datetime.datetime(2077, 6, 20, 23, 59, 59)
+CAMERA_LOG_EXP_SCALE_1 = 600
+CAMERA_LOG_EXP_SCALE_2 = 60000
 camera_logs = []
 id = 1
 log_time = CAMERA_LOG_START_DATETIME
@@ -173,7 +178,29 @@ while log_time < CURRENT_DATETIME:
         )
     )
     id += 1
-    log_time += datetime.timedelta(seconds=random_exp_seconds(CAMERA_LOG_EXP_SCALE))
+    log_time += datetime.timedelta(seconds=random_exp_seconds(CAMERA_LOG_EXP_SCALE_1))
+log_time = CAMERA_LOG_START_DATETIME
+while log_time < CAMERA_LOG_END_DATETIME_ENERGY_CENTER:
+    citizen_captured = citizens[rng.integers(len(citizens))]["id"]
+    camera_logs.extend(
+        [
+            random_camera_log_with_energy_center(
+                id=id,
+                citizen_id=citizen_captured,
+                datetime=log_time,
+            ),
+            random_camera_log_with_energy_center(
+                id=id,
+                citizen_id=citizen_captured,
+                datetime=log_time
+                + datetime.timedelta(
+                    seconds=np.max([1000, rng.normal(loc=48000, scale=16000)])
+                ),
+            ),
+        ]
+    )
+    id += 1
+    log_time += datetime.timedelta(seconds=random_exp_seconds(CAMERA_LOG_EXP_SCALE_2))
 camera_logs_pd = pd.DataFrame(data=camera_logs)
 special_camera_logs_pd = pd.read_csv(os.path.join(SEEDS_DIR, "special_camera_logs.csv"))
 camera_logs_pd = pd.concat([camera_logs_pd, special_camera_logs_pd], ignore_index=True)

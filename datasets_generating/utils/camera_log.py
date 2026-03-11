@@ -18,6 +18,9 @@ def random_camera_id_without_energy_center():
         return r + 2
     return r
 
+def random_camera_id_with_energy_center():
+    r = rng.integers(0, 2) + 7
+    return r
 
 def random_camera_log_without_energy_center(
     id: int, citizen_id: str, datetime: datetime.datetime
@@ -25,6 +28,16 @@ def random_camera_log_without_energy_center(
     return {
         "id": id,
         "camera_id": random_camera_id_without_energy_center(),
+        "citizen_id": citizen_id,
+        "datetime": datetime.isoformat(sep=" ", timespec="seconds"),
+    }
+
+def random_camera_log_with_energy_center(
+    id: int, citizen_id: str, datetime: datetime.datetime
+) -> object:
+    return {
+        "id": id,
+        "camera_id": random_camera_id_with_energy_center(),
         "citizen_id": citizen_id,
         "datetime": datetime.isoformat(sep=" ", timespec="seconds"),
     }
