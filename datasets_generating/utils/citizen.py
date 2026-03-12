@@ -83,7 +83,7 @@ def random_citizen(current_date: datetime.date) -> object:
         "first_name": first_name,
         "last_name": last_name,
         "sex": sex,
-        "birthday": f"{birthday.year}-{birthday.month:02d}-{birthday.day:02d}",
+        "birthday": birthday.isoformat(),
         "age": age_year,
         "social_credit": social_credit,
     }

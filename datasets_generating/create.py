@@ -44,32 +44,48 @@ def save_table(df: pd.DataFrame, filename: str, index: bool = False) -> None:
 # === Create citizens.csv ===
 # ===========================
 
-NUM_CITIZENS = 10000
-citizens = [random_citizen(current_date=CURRENT_DATE) for _ in range(NUM_CITIZENS)]
+NUM_CITIZENS_NORMAL = 10000
+
+# Normal citizens
+citizens = [
+    random_citizen(current_date=CURRENT_DATE) for _ in range(NUM_CITIZENS_NORMAL)
+]
 citizens_pd = pd.DataFrame(data=citizens)
+
+# Special Citizens
 special_citizens_pd = read_seed("special_citizens.csv").drop(columns="note")
+
+# Concat
 citizens_pd = pd.concat([citizens_pd, special_citizens_pd], ignore_index=True)
 citizens_pd = citizens_pd.astype({"id": str})
 citizens_pd.sort_values(by="id", ignore_index=True, inplace=True)
+citizens = citizens_pd.to_dict(orient="records")
+
+# Save & print log
 save_table(citizens_pd, "citizens.csv")
 print("Number of Citizens:", citizens_pd.shape[0])
 print("Has Citizen ID Duplicate:", citizens_pd.duplicated().any())
-citizens = citizens_pd.to_dict(orient="records")
 
 # ===========================
 # === Create id_cards.csv ===
 # ===========================
 
+# Normal ID cards
 id_cards = []
 for citizen in citizens:
     id_cards.extend(random_id_cards(citizen_id=citizen["id"]))
 id_cards_pd = pd.DataFrame(data=id_cards)
+
+# Special ID cards
 special_id_cards_pd = read_seed("special_id_cards.csv")
 id_cards_pd = pd.concat([id_cards_pd, special_id_cards_pd], ignore_index=True)
 id_cards_pd = id_cards_pd.astype({"card_id": str})
-id_cards_pd.sort_values(by="card_id", inplace=True)
+id_cards_pd.sort_values(by="card_id", ignore_index=True, inplace=True)
+
+# Save & print
 save_table(id_cards_pd, "id_cards.csv")
 print("Number of ID cards:", id_cards_pd.shape[0])
+print("Has Card ID Duplicate:", id_cards_pd["card_id"].duplicated().any())
 
 # =============================
 # === Create guard_logs.csv ===
@@ -88,7 +104,7 @@ guard_logs_pd = pd.DataFrame(data=guard_logs)
 special_guard_logs_pd = read_seed("special_guard_logs.csv")
 guard_logs_pd = pd.concat([guard_logs_pd, special_guard_logs_pd], ignore_index=True)
 guard_logs_pd = guard_logs_pd.astype({"datetime": str})
-guard_logs_pd.sort_values(by="datetime", inplace=True)
+guard_logs_pd.sort_values(by="datetime", ignore_index=True, inplace=True)
 guard_logs_pd["id"] = np.arange(guard_logs_pd.shape[0]) + 1
 save_table(guard_logs_pd, "guard_logs.csv")
 print("Number of guard logs:", guard_logs_pd.shape[0])
@@ -141,7 +157,7 @@ card_swipe.append(
 )
 card_swipe_df = pd.DataFrame(data=card_swipe)
 card_swipe_df.astype({"datetime": str})
-card_swipe_df.sort_values(by="datetime", inplace=True)
+card_swipe_df.sort_values(by="datetime", ignore_index=True, inplace=True)
 card_swipe_df["swipe_id"] = np.arange(card_swipe_df.shape[0])
 save_table(card_swipe_df, "card_swipes.csv")
 print("Number of card swipes:", card_swipe_df.shape[0])
@@ -187,7 +203,7 @@ taxi_logs_pd = pd.DataFrame(data=taxi_logs)
 special_taxi_logs_pd = read_seed("special_taxi_log.csv")
 taxi_logs_pd = pd.concat([taxi_logs_pd, special_taxi_logs_pd], ignore_index=True)
 taxi_logs_pd = taxi_logs_pd.astype({"trip_time": str})
-taxi_logs_pd.sort_values(by="trip_time", inplace=True)
+taxi_logs_pd.sort_values(by="trip_time", ignore_index=True, inplace=True)
 taxi_logs_pd["trip_id"] = np.arange(taxi_logs_pd.shape[0])
 save_table(taxi_logs_pd, "taxi_logs.csv")
 print("Number of taxi logs:", taxi_logs_pd.shape[0])
@@ -239,7 +255,7 @@ camera_logs_pd = pd.DataFrame(data=camera_logs)
 special_camera_logs_pd = read_seed("special_camera_logs.csv")
 camera_logs_pd = pd.concat([camera_logs_pd, special_camera_logs_pd], ignore_index=True)
 camera_logs_pd.astype({"datetime": str})
-camera_logs_pd.sort_values(by="datetime", inplace=True)
+camera_logs_pd.sort_values(by="datetime", ignore_index=True, inplace=True)
 camera_logs_pd["id"] = np.arange(camera_logs_pd.shape[0]) + 1
 save_table(camera_logs_pd, "camera_logs.csv")
 print("Number of camera logs:", camera_logs_pd.shape[0])
