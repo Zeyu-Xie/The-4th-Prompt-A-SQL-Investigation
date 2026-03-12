@@ -24,7 +24,7 @@ def random_camera_id_with_energy_center():
 
 def random_camera_log_without_energy_center(
     id: int, citizen_id: str, datetime: datetime.datetime
-) -> object:
+) -> dict:
     return {
         "id": id,
         "camera_id": random_camera_id_without_energy_center(),
@@ -34,7 +34,7 @@ def random_camera_log_without_energy_center(
 
 def random_camera_log_with_energy_center(
     id: int, citizen_id: str, datetime: datetime.datetime
-) -> object:
+) -> dict:
     return {
         "id": id,
         "camera_id": random_camera_id_with_energy_center(),

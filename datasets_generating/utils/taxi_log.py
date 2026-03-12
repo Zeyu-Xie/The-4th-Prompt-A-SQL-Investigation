@@ -26,7 +26,7 @@ ARR_CITIZEN_ID = [
 
 def random_taxi_log(
     trip_id: int, citizen_id: str, trip_time: datetime.datetime
-) -> object:
+) -> dict:
     destination_lon, destination_lat = random_location()
     actual_dropoff_lon, actual_dropoff_lat = relative_location(
         lon=destination_lon, lat=destination_lat, dis_scale=DIS_OFFSET_SCALE
@@ -48,7 +48,7 @@ def random_taxi_log(
 
 def random_special_taxi_log(
     trip_id: int, citizen_id: str, trip_time: datetime.datetime
-) -> object:
+) -> dict:
     destination_lon, destination_lat = random_location()
     actual_dropoff_lon, actual_dropoff_lat = relative_location(
         lon=80.634, lat=28.56, dis_scale=DIS_OFFSET_SCALE

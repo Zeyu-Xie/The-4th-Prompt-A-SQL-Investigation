@@ -57,7 +57,7 @@ def random_social_credit(loc: float, scale: float) -> int:
     return raw
 
 
-def random_citizen(current_date: datetime.date) -> object:
+def random_citizen(current_date: datetime.date) -> dict:
 
     # Time and ID
     birthday = random_birthday(

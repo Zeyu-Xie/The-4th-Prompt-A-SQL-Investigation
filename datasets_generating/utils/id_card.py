@@ -13,7 +13,7 @@ def random_uuid() -> uuid.UUID:
     return uuid.UUID(bytes=rng.bytes(length=16), version=UUID_VERSION)
 
 
-def random_id_card(citizen_id: str, is_active: bool) -> object:
+def random_id_card(citizen_id: str, is_active: bool) -> dict:
     return {
         "card_id": str(random_uuid()),
         "citizen_id": citizen_id,

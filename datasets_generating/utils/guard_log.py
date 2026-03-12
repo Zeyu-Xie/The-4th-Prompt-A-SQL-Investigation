@@ -1,69 +1,16 @@
 import datetime
+import json
 import numpy as np
+import os
 
 from .location import random_location
 
+SEEDS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "seeds")
 RNG_SEED = 42
-ARR_EVENTS = [
-    {
-        "event_type": "traffic accident",
-        "action_taken": [
-            "info exchanging",
-            "towing",
-            "rescuing",
-            "tracing",
-            "alcohol testing",
-            "sorting",
-            "containment",
-        ],
-    },
-    {
-        "event_type": "public disturbance",
-        "action_taken": [
-            "mediating",
-            "dispersing",
-            "warning",
-            "de-escalating",
-            "patrolling",
-        ],
-    },
-    {
-        "event_type": "criminal activity",
-        "action_taken": [
-            "apprehending",
-            "handcuffing",
-            "searching",
-            "interrogating",
-            "crime-scene guarding",
-        ],
-    },
-    {
-        "event_type": "emergency aid",
-        "action_taken": [
-            "first-aiding",
-            "wellness checking",
-            "evacuating",
-            "counseling",
-            "entry forcing",
-        ],
-    },
-    {
-        "event_type": "property crime",
-        "action_taken": [
-            "fingerprinting",
-            "CCTV reviewing",
-            "itemizing",
-            "canvassing",
-            "recovering",
-        ],
-    },
-]
+with open(os.path.join(SEEDS_DIR, "guard_events.json"), "r") as f:
+    ARR_EVENTS = json.load(f)
 
 rng = np.random.default_rng(seed=RNG_SEED)
-
-
-def random_exp_seconds(scale: float) -> float:
-    return rng.exponential(scale=scale)
 
 
 def random_event_and_action() -> tuple[str, str]:
@@ -73,7 +20,7 @@ def random_event_and_action() -> tuple[str, str]:
     return event_type, action_taken
 
 
-def random_guard_log(id: int, datetime: datetime.datetime):
+def random_guard_log(id: int, datetime: datetime.datetime) -> dict:
     datetime = datetime.isoformat(sep=" ", timespec="seconds")
     event_type, action_taken = random_event_and_action()
     lon, lat = random_location()

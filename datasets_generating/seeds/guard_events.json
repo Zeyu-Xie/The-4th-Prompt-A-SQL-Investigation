@@ -1,0 +1,54 @@
+[
+    {
+        "event_type": "traffic accident",
+        "action_taken": [
+            "info exchanging",
+            "towing",
+            "rescuing",
+            "tracing",
+            "alcohol testing",
+            "sorting",
+            "containment"
+        ]
+    },
+    {
+        "event_type": "public disturbance",
+        "action_taken": [
+            "mediating",
+            "dispersing",
+            "warning",
+            "de-escalating",
+            "patrolling"
+        ]
+    },
+    {
+        "event_type": "criminal activity",
+        "action_taken": [
+            "apprehending",
+            "handcuffing",
+            "searching",
+            "interrogating",
+            "crime-scene guarding"
+        ]
+    },
+    {
+        "event_type": "emergency aid",
+        "action_taken": [
+            "first-aiding",
+            "wellness checking",
+            "evacuating",
+            "counseling",
+            "entry forcing"
+        ]
+    },
+    {
+        "event_type": "property crime",
+        "action_taken": [
+            "fingerprinting",
+            "CCTV reviewing",
+            "itemizing",
+            "canvassing",
+            "recovering"
+        ]
+    }
+]

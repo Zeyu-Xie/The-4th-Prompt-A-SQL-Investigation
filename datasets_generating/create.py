@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 from utils.citizen import random_citizen
-from utils.guard_log import random_guard_log, random_exp_seconds
+from utils.guard_log import random_guard_log
 from utils.id_card import random_id_cards
 from utils.system_audit import generate_all_system_audits, get_sha256
 from utils.taxi_log import random_taxi_log
@@ -36,6 +36,10 @@ def read_seed(filename: str) -> pd.DataFrame:
 
 def save_table(df: pd.DataFrame, filename: str, index: bool = False) -> None:
     df.to_csv(os.path.join(TABLES_DIR, filename), index=index)
+
+
+def random_exp(scale: float) -> float:
+    return rng.exponential(scale=scale)
 
 
 # -*-*-*-*-*-*-*-*-*-*-*-*- Create Tables -*-*-*-*-*-*-*-*-*-*-*-*-
@@ -93,19 +97,25 @@ print("Has Card ID Duplicate:", id_cards_pd["card_id"].duplicated().any())
 
 GUARD_LOG_START_DATETIME = datetime.datetime(2070, 1, 1, 0, 0, 44)
 GUARD_LOG_EXP_SCALE = 12000
+
+# Normal guard logs
 guard_logs = []
 id = 1
 log_time = GUARD_LOG_START_DATETIME
 while log_time < CURRENT_DATETIME:
     guard_logs.append(random_guard_log(id, datetime=log_time))
+    log_time += datetime.timedelta(seconds=random_exp(GUARD_LOG_EXP_SCALE))
     id += 1
-    log_time += datetime.timedelta(seconds=random_exp_seconds(GUARD_LOG_EXP_SCALE))
 guard_logs_pd = pd.DataFrame(data=guard_logs)
+
+# Special guard logs
 special_guard_logs_pd = read_seed("special_guard_logs.csv")
 guard_logs_pd = pd.concat([guard_logs_pd, special_guard_logs_pd], ignore_index=True)
 guard_logs_pd = guard_logs_pd.astype({"datetime": str})
 guard_logs_pd.sort_values(by="datetime", ignore_index=True, inplace=True)
 guard_logs_pd["id"] = np.arange(guard_logs_pd.shape[0]) + 1
+
+# Save & print
 save_table(guard_logs_pd, "guard_logs.csv")
 print("Number of guard logs:", guard_logs_pd.shape[0])
 
@@ -145,7 +155,7 @@ while log_time < CURRENT_DATETIME:
         }
     )
     id += 1
-    log_time += datetime.timedelta(seconds=random_exp_seconds(CARD_SWIPE_EXP_SCALE))
+    log_time += datetime.timedelta(seconds=random_exp(CARD_SWIPE_EXP_SCALE))
 card_swipe.append(
     {
         "swipe_id": 0,
@@ -198,7 +208,7 @@ while log_time < CURRENT_DATETIME:
         )
     )
     id += 1
-    log_time += datetime.timedelta(seconds=random_exp_seconds(TAXI_LOG_EXP_SCALE))
+    log_time += datetime.timedelta(seconds=random_exp(TAXI_LOG_EXP_SCALE))
 taxi_logs_pd = pd.DataFrame(data=taxi_logs)
 special_taxi_logs_pd = read_seed("special_taxi_log.csv")
 taxi_logs_pd = pd.concat([taxi_logs_pd, special_taxi_logs_pd], ignore_index=True)
@@ -228,7 +238,7 @@ while log_time < CURRENT_DATETIME:
         )
     )
     id += 1
-    log_time += datetime.timedelta(seconds=random_exp_seconds(CAMERA_LOG_EXP_SCALE_1))
+    log_time += datetime.timedelta(seconds=random_exp(CAMERA_LOG_EXP_SCALE_1))
 log_time = CAMERA_LOG_START_DATETIME
 while log_time < CAMERA_LOG_END_DATETIME_ENERGY_CENTER:
     citizen_captured = citizens[rng.integers(len(citizens))]["id"]
@@ -250,7 +260,7 @@ while log_time < CAMERA_LOG_END_DATETIME_ENERGY_CENTER:
         ]
     )
     id += 1
-    log_time += datetime.timedelta(seconds=random_exp_seconds(CAMERA_LOG_EXP_SCALE_2))
+    log_time += datetime.timedelta(seconds=random_exp(CAMERA_LOG_EXP_SCALE_2))
 camera_logs_pd = pd.DataFrame(data=camera_logs)
 special_camera_logs_pd = read_seed("special_camera_logs.csv")
 camera_logs_pd = pd.concat([camera_logs_pd, special_camera_logs_pd], ignore_index=True)
