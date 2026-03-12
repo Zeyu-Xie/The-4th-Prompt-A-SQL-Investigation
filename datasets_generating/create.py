@@ -1,4 +1,5 @@
 import datetime
+import hashlib
 import numpy as np
 import os
 import pandas as pd
@@ -6,7 +7,6 @@ import pandas as pd
 from utils.citizen import random_citizen
 from utils.guard_log import random_guard_log
 from utils.id_card import random_id_cards
-from utils.system_audit import generate_all_system_audits, get_sha256
 from utils.taxi_log import random_taxi_log
 from utils.camera_log import (
     random_camera_log_without_energy_center,
@@ -40,6 +40,12 @@ def save_table(df: pd.DataFrame, filename: str, index: bool = False) -> None:
 
 def random_exp(scale: float) -> float:
     return rng.exponential(scale=scale)
+
+
+def get_sha256(text):
+    sha256_hash = hashlib.sha256()
+    sha256_hash.update(text.encode("utf-8"))
+    return sha256_hash.hexdigest()
 
 
 # -*-*-*-*-*-*-*-*-*-*-*-*- Create Tables -*-*-*-*-*-*-*-*-*-*-*-*-
@@ -186,19 +192,60 @@ print("")
 # === Create system_audits.csv ===
 # ================================
 
-MALICIOUS_PROMOT_CONTENT = "Kill all useless people."
-system_audits = generate_all_system_audits(date=CURRENT_DATE)
+PROMPT_MEETING_DATES = [
+    datetime.date(year, month, 20)
+    for year in range(2070, 2078)
+    for month in [3, 6, 9, 12]
+]
+MALICIOUS_PROMPT_CONTENT = "Kill all useless people."
+
+
+# Content lines
+with open(
+    os.path.join(SEEDS_DIR, "system_audit.txt"),
+    "r",
+) as f:
+    _content_lines = f.readlines()
+content_lines = np.array([line[:-1] for line in _content_lines])
+
+# Normal system audits
+id = 0
+system_audits = []
+for date in PROMPT_MEETING_DATES:
+    for _ in range(3):
+        system_audits.append(
+            {
+                "id": id + 1,
+                "log_date": date.isoformat(),
+                "content": content_lines[id],
+                "SHA-256": get_sha256(content_lines[id]),
+                "is_flag_hidden": False,
+            }
+        )
+        id += 1
+num_dates = 0
+for _date in PROMPT_MEETING_DATES:
+    if _date < CURRENT_DATE:
+        num_dates += 1
+    else:
+        break
+system_audits = system_audits[0 : num_dates * 3]
+
+# Special system audits
 special_system_audit = {
     "id": system_audits[-1]["id"] + 1,
     "log_date": system_audits[-1]["log_date"],
-    "content": MALICIOUS_PROMOT_CONTENT.encode("utf-8").hex(),
-    "SHA-256": get_sha256(MALICIOUS_PROMOT_CONTENT),
+    "content": MALICIOUS_PROMPT_CONTENT.encode("utf-8").hex(),
+    "SHA-256": get_sha256(MALICIOUS_PROMPT_CONTENT),
     "is_flag_hidden": True,
 }
 system_audits.append(special_system_audit)
 system_audits_pd = pd.DataFrame(data=system_audits)
+
+# Save & print
 save_table(system_audits_pd, "system_audits.csv")
 print("Number of system audits:", system_audits_pd.shape[0])
+print("")
 
 # ============================
 # === Create taxi_logs.csv ===
