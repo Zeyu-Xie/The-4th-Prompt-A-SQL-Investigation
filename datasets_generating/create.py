@@ -69,6 +69,7 @@ citizens = citizens_pd.to_dict(orient="records")
 save_table(citizens_pd, "citizens.csv")
 print("Number of Citizens:", citizens_pd.shape[0])
 print("Has Citizen ID Duplicate:", citizens_pd.duplicated().any())
+print("")
 
 # ===========================
 # === Create id_cards.csv ===
@@ -90,6 +91,7 @@ id_cards_pd.sort_values(by="card_id", ignore_index=True, inplace=True)
 save_table(id_cards_pd, "id_cards.csv")
 print("Number of ID cards:", id_cards_pd.shape[0])
 print("Has Card ID Duplicate:", id_cards_pd["card_id"].duplicated().any())
+print("")
 
 # =============================
 # === Create guard_logs.csv ===
@@ -118,22 +120,29 @@ guard_logs_pd["id"] = np.arange(guard_logs_pd.shape[0]) + 1
 # Save & print
 save_table(guard_logs_pd, "guard_logs.csv")
 print("Number of guard logs:", guard_logs_pd.shape[0])
+print("")
 
 # ==============================
 # === Create card_swipes.csv ===
 # ==============================
 
-NUM_CITIZEN_PERMITTED = 200
 CARD_SWIPE_START_DATETIME = datetime.datetime(2070, 1, 1, 6, 31, 29)
 CARD_SWIPE_EXP_SCALE = 864
+NUM_CITIZEN_PERMITTED = 200
+MAYER_ID = "202703042077"
+
+# Citizen permitted
 arr_citizen_id_permitted = citizens_pd.loc[citizens_pd["social_credit"] > 50][
     "id"
 ].to_list()
 arr_citizen_id_permitted = rng.choice(
     arr_citizen_id_permitted, size=NUM_CITIZEN_PERMITTED, replace=False
 ).tolist()
-if "202703042077" not in arr_citizen_id_permitted:
-    arr_citizen_id_permitted.append("202703042077")
+if MAYER_ID not in arr_citizen_id_permitted:
+    arr_citizen_id_permitted.append(MAYER_ID)
+print("Number of Citizens Permitted:", len(arr_citizen_id_permitted))
+
+# Card ID permitted
 arr_card_id_permitted = list(
     id_cards_pd.loc[
         id_cards_pd["citizen_id"].isin(arr_citizen_id_permitted)
@@ -141,36 +150,37 @@ arr_card_id_permitted = list(
         == True
     ]["card_id"]
 )
-n = len(arr_card_id_permitted)
-card_swipe = []
+n_card_id_permitted = len(arr_card_id_permitted)
+print("Number of Card ID Permitted:", n_card_id_permitted)
+
+# Normal card swipes
+card_swipes = []
 id = 1
 log_time = CARD_SWIPE_START_DATETIME
 while log_time < CURRENT_DATETIME:
-    idx = rng.integers(0, n)
-    card_swipe.append(
+    idx = rng.integers(0, n_card_id_permitted)
+    card_swipes.append(
         {
             "swipe_id": id,
             "card_id": arr_card_id_permitted[idx],
             "datetime": log_time.isoformat(sep=" ", timespec="seconds"),
         }
     )
-    id += 1
     log_time += datetime.timedelta(seconds=random_exp(CARD_SWIPE_EXP_SCALE))
-card_swipe.append(
-    {
-        "swipe_id": 0,
-        "card_id": "9b36c499-499a-422f-ab2d-0230c9f9761a",
-        "datetime": datetime.datetime(2077, 6, 20, 21, 6, 30).isoformat(
-            sep=" ", timespec="seconds"
-        ),
-    }
-)
-card_swipe_df = pd.DataFrame(data=card_swipe)
-card_swipe_df.astype({"datetime": str})
-card_swipe_df.sort_values(by="datetime", ignore_index=True, inplace=True)
-card_swipe_df["swipe_id"] = np.arange(card_swipe_df.shape[0])
-save_table(card_swipe_df, "card_swipes.csv")
-print("Number of card swipes:", card_swipe_df.shape[0])
+    id += 1
+card_swipes_pd = pd.DataFrame(data=card_swipes)
+
+# Special card swipes
+special_card_swipes_pd = read_seed("special_card_swipes.csv")
+card_swipes_pd = pd.concat([card_swipes_pd, special_card_swipes_pd], ignore_index=True)
+card_swipes_pd.astype({"datetime": str})
+card_swipes_pd.sort_values(by="datetime", ignore_index=True, inplace=True)
+card_swipes_pd["swipe_id"] = np.arange(card_swipes_pd.shape[0])
+
+# Save & print
+save_table(card_swipes_pd, "card_swipes.csv")
+print("Number of card swipes:", card_swipes_pd.shape[0])
+print("")
 
 # ================================
 # === Create system_audits.csv ===
