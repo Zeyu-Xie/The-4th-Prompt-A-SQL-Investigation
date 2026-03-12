@@ -250,6 +250,8 @@ print("")
 
 TAXI_LOG_START_DATETIME = datetime.datetime(2077, 1, 1, 0, 5, 32)
 TAXI_LOG_EXP_SCALE = 600
+
+# Normal taxi logs
 taxi_logs = []
 id = 1
 log_time = TAXI_LOG_START_DATETIME
@@ -261,14 +263,18 @@ while log_time < CURRENT_DATETIME:
             trip_time=log_time,
         )
     )
-    id += 1
     log_time += datetime.timedelta(seconds=random_exp(TAXI_LOG_EXP_SCALE))
+    id += 1
 taxi_logs_pd = pd.DataFrame(data=taxi_logs)
+
+# Special taxi logs
 special_taxi_logs_pd = read_seed("special_taxi_log.csv")
 taxi_logs_pd = pd.concat([taxi_logs_pd, special_taxi_logs_pd], ignore_index=True)
 taxi_logs_pd = taxi_logs_pd.astype({"trip_time": str})
 taxi_logs_pd.sort_values(by="trip_time", ignore_index=True, inplace=True)
 taxi_logs_pd["trip_id"] = np.arange(taxi_logs_pd.shape[0])
+
+# Save & print
 save_table(taxi_logs_pd, "taxi_logs.csv")
 print("Number of taxi logs:", taxi_logs_pd.shape[0])
 
