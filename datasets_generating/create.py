@@ -161,7 +161,7 @@ special_system_audit = {
 }
 system_audits.append(special_system_audit)
 system_audits_pd = pd.DataFrame(data=system_audits)
-system_audits_pd.to_csv(os.path.join(TABLES_DIR, "system_audits.csv"), index=False)
+save_table(system_audits_pd, "system_audits.csv")
 print("Number of system audits:", system_audits_pd.shape[0])
 
 # ============================
@@ -184,12 +184,12 @@ while log_time < CURRENT_DATETIME:
     id += 1
     log_time += datetime.timedelta(seconds=random_exp_seconds(TAXI_LOG_EXP_SCALE))
 taxi_logs_pd = pd.DataFrame(data=taxi_logs)
-special_taxi_logs_pd = pd.read_csv(os.path.join(SEEDS_DIR, "special_taxi_log.csv"))
+special_taxi_logs_pd = read_seed("special_taxi_log.csv")
 taxi_logs_pd = pd.concat([taxi_logs_pd, special_taxi_logs_pd], ignore_index=True)
 taxi_logs_pd = taxi_logs_pd.astype({"trip_time": str})
 taxi_logs_pd.sort_values(by="trip_time", inplace=True)
 taxi_logs_pd["trip_id"] = np.arange(taxi_logs_pd.shape[0])
-taxi_logs_pd.to_csv(os.path.join(TABLES_DIR, "taxi_logs.csv"), index=False)
+save_table(taxi_logs_pd, "taxi_logs.csv")
 print("Number of taxi logs:", taxi_logs_pd.shape[0])
 
 # ==============================
@@ -236,12 +236,12 @@ while log_time < CAMERA_LOG_END_DATETIME_ENERGY_CENTER:
     id += 1
     log_time += datetime.timedelta(seconds=random_exp_seconds(CAMERA_LOG_EXP_SCALE_2))
 camera_logs_pd = pd.DataFrame(data=camera_logs)
-special_camera_logs_pd = pd.read_csv(os.path.join(SEEDS_DIR, "special_camera_logs.csv"))
+special_camera_logs_pd = read_seed("special_camera_logs.csv")
 camera_logs_pd = pd.concat([camera_logs_pd, special_camera_logs_pd], ignore_index=True)
 camera_logs_pd.astype({"datetime": str})
 camera_logs_pd.sort_values(by="datetime", inplace=True)
 camera_logs_pd["id"] = np.arange(camera_logs_pd.shape[0]) + 1
-camera_logs_pd.to_csv(os.path.join(TABLES_DIR, "camera_logs.csv"), index=False)
+save_table(camera_logs_pd, "camera_logs.csv")
 print("Number of camera logs:", camera_logs_pd.shape[0])
 
 # ======================================
@@ -256,7 +256,5 @@ system_audits_inner_pd["parent_id"] += 1
 system_audits_inner_pd.iloc[:91, system_audits_inner_pd.columns.get_loc("sha-256")] = (
     system_audits_pd["content"].values
 )
-system_audits_inner_pd.to_csv(
-    os.path.join(TABLES_DIR, "system_audits_inner.csv"), index=False
-)
+save_table(system_audits_inner_pd, "system_audits_inner.csv")
 print("Number of inner system audits:", system_audits_inner_pd.shape[0])
