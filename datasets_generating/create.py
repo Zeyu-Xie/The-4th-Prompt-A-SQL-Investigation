@@ -14,6 +14,8 @@ from utils.camera_log import (
 )
 from utils.system_audit_inner import generate_all_system_audits_inner
 
+# -*-*-*-*-*-*-*-*-*-*-*-*- Load Parameters and variables -*-*-*-*-*-*-*-*-*-*-*-*-
+
 RNG_SEED = 42
 TABLES_DIR = os.path.join(os.path.dirname(__file__), "tables")
 SEEDS_DIR = os.path.join(os.path.dirname(__file__), "seeds")
@@ -25,34 +27,54 @@ rng = np.random.default_rng(seed=RNG_SEED)
 if not os.path.exists(TABLES_DIR):
     os.mkdir(TABLES_DIR)
 
-# citizens.csv
+# -*-*-*-*-*-*-*-*-*-*-*-*- Define Functions -*-*-*-*-*-*-*-*-*-*-*-*-
+
+
+def read_seed(filename: str) -> pd.DataFrame:
+    return pd.read_csv(os.path.join(SEEDS_DIR, filename))
+
+
+def save_table(df: pd.DataFrame, filename: str, index: bool = False) -> None:
+    df.to_csv(os.path.join(TABLES_DIR, filename), index=index)
+
+
+# -*-*-*-*-*-*-*-*-*-*-*-*- Create Tables -*-*-*-*-*-*-*-*-*-*-*-*-
+
+# ===========================
+# === Create citizens.csv ===
+# ===========================
+
 NUM_CITIZENS = 10000
 citizens = [random_citizen(current_date=CURRENT_DATE) for _ in range(NUM_CITIZENS)]
 citizens_pd = pd.DataFrame(data=citizens)
-special_citizens_pd = pd.read_csv(os.path.join(SEEDS_DIR, "special_citizens.csv")).drop(
-    columns="note"
-)
+special_citizens_pd = read_seed("special_citizens.csv").drop(columns="note")
 citizens_pd = pd.concat([citizens_pd, special_citizens_pd], ignore_index=True)
 citizens_pd = citizens_pd.astype({"id": str})
 citizens_pd.sort_values(by="id", ignore_index=True, inplace=True)
-citizens_pd.to_csv(os.path.join(TABLES_DIR, "citizens.csv"), index=False)
+save_table(citizens_pd, "citizens.csv")
 print("Number of Citizens:", citizens_pd.shape[0])
 print("Has Citizen ID Duplicate:", citizens_pd.duplicated().any())
 citizens = citizens_pd.to_dict(orient="records")
 
-# id_cards.csv
+# ===========================
+# === Create id_cards.csv ===
+# ===========================
+
 id_cards = []
 for citizen in citizens:
     id_cards.extend(random_id_cards(citizen_id=citizen["id"]))
 id_cards_pd = pd.DataFrame(data=id_cards)
-special_id_cards_pd = pd.read_csv(os.path.join(SEEDS_DIR, "special_id_cards.csv"))
+special_id_cards_pd = read_seed("special_id_cards.csv")
 id_cards_pd = pd.concat([id_cards_pd, special_id_cards_pd], ignore_index=True)
 id_cards_pd = id_cards_pd.astype({"card_id": str})
 id_cards_pd.sort_values(by="card_id", inplace=True)
-id_cards_pd.to_csv(os.path.join(TABLES_DIR, "id_cards.csv"), index=False)
+save_table(id_cards_pd, "id_cards.csv")
 print("Number of ID cards:", id_cards_pd.shape[0])
 
-# guard_logs.csv
+# =============================
+# === Create guard_logs.csv ===
+# =============================
+
 GUARD_LOG_START_DATETIME = datetime.datetime(2070, 1, 1, 0, 0, 44)
 GUARD_LOG_EXP_SCALE = 12000
 guard_logs = []
@@ -63,15 +85,18 @@ while log_time < CURRENT_DATETIME:
     id += 1
     log_time += datetime.timedelta(seconds=random_exp_seconds(GUARD_LOG_EXP_SCALE))
 guard_logs_pd = pd.DataFrame(data=guard_logs)
-special_guard_logs_pd = pd.read_csv(os.path.join(SEEDS_DIR, "special_guard_logs.csv"))
+special_guard_logs_pd = read_seed("special_guard_logs.csv")
 guard_logs_pd = pd.concat([guard_logs_pd, special_guard_logs_pd], ignore_index=True)
 guard_logs_pd = guard_logs_pd.astype({"datetime": str})
 guard_logs_pd.sort_values(by="datetime", inplace=True)
 guard_logs_pd["id"] = np.arange(guard_logs_pd.shape[0]) + 1
-guard_logs_pd.to_csv(os.path.join(TABLES_DIR, "guard_logs.csv"), index=False)
+save_table(guard_logs_pd, "guard_logs.csv")
 print("Number of guard logs:", guard_logs_pd.shape[0])
 
-# card_swipes.csv
+# ==============================
+# === Create card_swipes.csv ===
+# ==============================
+
 NUM_CITIZEN_PERMITTED = 200
 CARD_SWIPE_START_DATETIME = datetime.datetime(2070, 1, 1, 6, 31, 29)
 CARD_SWIPE_EXP_SCALE = 864
@@ -118,10 +143,13 @@ card_swipe_df = pd.DataFrame(data=card_swipe)
 card_swipe_df.astype({"datetime": str})
 card_swipe_df.sort_values(by="datetime", inplace=True)
 card_swipe_df["swipe_id"] = np.arange(card_swipe_df.shape[0])
-card_swipe_df.to_csv(os.path.join(TABLES_DIR, "card_swipes.csv"), index=False)
+save_table(card_swipe_df, "card_swipes.csv")
 print("Number of card swipes:", card_swipe_df.shape[0])
 
-# system_audits.csv
+# ================================
+# === Create system_audits.csv ===
+# ================================
+
 MALICIOUS_PROMOT_CONTENT = "Kill all useless people."
 system_audits = generate_all_system_audits(date=CURRENT_DATE)
 special_system_audit = {
@@ -136,8 +164,10 @@ system_audits_pd = pd.DataFrame(data=system_audits)
 system_audits_pd.to_csv(os.path.join(TABLES_DIR, "system_audits.csv"), index=False)
 print("Number of system audits:", system_audits_pd.shape[0])
 
+# ============================
+# === Create taxi_logs.csv ===
+# ============================
 
-# taxi_logs.csv
 TAXI_LOG_START_DATETIME = datetime.datetime(2077, 1, 1, 0, 5, 32)
 TAXI_LOG_EXP_SCALE = 600
 taxi_logs = []
@@ -162,7 +192,10 @@ taxi_logs_pd["trip_id"] = np.arange(taxi_logs_pd.shape[0])
 taxi_logs_pd.to_csv(os.path.join(TABLES_DIR, "taxi_logs.csv"), index=False)
 print("Number of taxi logs:", taxi_logs_pd.shape[0])
 
-# camera_logs.csv
+# ==============================
+# === Create camera_logs.csv ===
+# ==============================
+
 CAMERA_LOG_START_DATETIME = datetime.datetime(2077, 1, 1, 0, 3, 22)
 CAMERA_LOG_END_DATETIME_ENERGY_CENTER = datetime.datetime(2077, 6, 20, 23, 59, 59)
 CAMERA_LOG_EXP_SCALE_1 = 600
@@ -211,7 +244,10 @@ camera_logs_pd["id"] = np.arange(camera_logs_pd.shape[0]) + 1
 camera_logs_pd.to_csv(os.path.join(TABLES_DIR, "camera_logs.csv"), index=False)
 print("Number of camera logs:", camera_logs_pd.shape[0])
 
-# system_audits_inner.csv
+# ======================================
+# === Create system_audits_inner.csv ===
+# ======================================
+
 system_audits_inner = generate_all_system_audits_inner()
 system_audits_inner_pd = pd.DataFrame(system_audits_inner)
 system_audits_inner_pd.astype({"parent_id": int})
