@@ -268,7 +268,7 @@ while log_time < CURRENT_DATETIME:
 taxi_logs_pd = pd.DataFrame(data=taxi_logs)
 
 # Special taxi logs
-special_taxi_logs_pd = read_seed("special_taxi_log.csv")
+special_taxi_logs_pd = read_seed("special_taxi_logs.csv")
 taxi_logs_pd = pd.concat([taxi_logs_pd, special_taxi_logs_pd], ignore_index=True)
 taxi_logs_pd = taxi_logs_pd.astype({"trip_time": str})
 taxi_logs_pd.sort_values(by="trip_time", ignore_index=True, inplace=True)

@@ -18,22 +18,22 @@ dis_per_lat = 111.12
 special_address_pd = pd.read_csv(os.path.join(SEEDS_DIR, "special_addresses.csv"))
 
 
-def random_location():
+def random_location() -> tuple[float, float]:
     lon = rng.uniform(LON_RANGE[0], LON_RANGE[1])
     lat = rng.uniform(LAT_RANGE[0], LAT_RANGE[1])
     return lon, lat
 
 
 def relative_location(lon: float, lat: float, dis_scale: float) -> tuple[float, float]:
-    return lon + rng.normal(loc=0, scale=dis_scale / dis_per_lon), lat + rng.normal(
-        loc=0, scale=dis_scale / dis_per_lat
-    )
+    relative_lon = lon + rng.normal(loc=0, scale=dis_scale / dis_per_lon)
+    relative_lat = lat + rng.normal(loc=0, scale=dis_scale / dis_per_lat)
+    return relative_lon, relative_lat
 
 
 def distance(A: tuple[float, float], B: tuple[float, float]) -> float:
-    return math.sqrt(
-        ((A[0] - B[0]) * dis_per_lon) ** 2 + ((A[1] - B[1]) * dis_per_lat) ** 2
-    )
+    lon_dis = (A[0] - B[0]) * dis_per_lon
+    lat_dis = (A[1] - B[1]) * dis_per_lat
+    return math.sqrt(lon_dis**2 + lat_dis**2)
 
 
 def address_name(lon: float, lat: float) -> str:
