@@ -1,8 +1,11 @@
+import base64
 import datetime
 import hashlib
+import math
 import numpy as np
 import os
 import pandas as pd
+import random
 
 from utils.citizen import random_citizen
 from utils.guard_log import random_guard_log
@@ -12,17 +15,18 @@ from utils.camera_log import (
     random_camera_log_without_energy_center,
     random_camera_log_with_energy_center,
 )
-from utils.system_audit_inner import generate_all_system_audits_inner
 
 # -*-*-*-*-*-*-*-*-*-*-*-*- Load Parameters and variables -*-*-*-*-*-*-*-*-*-*-*-*-
 
 RNG_SEED = 42
+RNG_RANDOM_SEED = 42
 TABLES_DIR = os.path.join(os.path.dirname(__file__), "tables")
 SEEDS_DIR = os.path.join(os.path.dirname(__file__), "seeds")
 CURRENT_DATETIME = datetime.datetime(2077, 6, 28, 14, 57, 3)
 CURRENT_DATE = datetime.date(2077, 6, 28)
 
 rng = np.random.default_rng(seed=RNG_SEED)
+rng_random = random.Random(RNG_RANDOM_SEED)
 
 if not os.path.exists(TABLES_DIR):
     os.mkdir(TABLES_DIR)
@@ -42,10 +46,18 @@ def random_exp(scale: float) -> float:
     return rng.exponential(scale=scale)
 
 
-def get_sha256(text):
+def get_sha256(text: str) -> str:
     sha256_hash = hashlib.sha256()
     sha256_hash.update(text.encode("utf-8"))
     return sha256_hash.hexdigest()
+
+
+def random_base64(min_len: int, max_len: int) -> str:
+    target_len = rng_random.randint(min_len, max_len)
+    n_bytes = (target_len * 3 // 4) + 3
+    raw_bytes = bytes([rng_random.getrandbits(8) for _ in range(n_bytes)])
+    b64_str = base64.b64encode(raw_bytes).decode("utf-8")
+    return b64_str[:target_len]
 
 
 # -*-*-*-*-*-*-*-*-*-*-*-*- Create Tables -*-*-*-*-*-*-*-*-*-*-*-*-
@@ -277,6 +289,7 @@ taxi_logs_pd["trip_id"] = np.arange(taxi_logs_pd.shape[0])
 # Save & print
 save_table(taxi_logs_pd, "taxi_logs.csv")
 print("Number of taxi logs:", taxi_logs_pd.shape[0])
+print("")
 
 # ==============================
 # === Create camera_logs.csv ===
@@ -284,8 +297,13 @@ print("Number of taxi logs:", taxi_logs_pd.shape[0])
 
 CAMERA_LOG_START_DATETIME = datetime.datetime(2077, 1, 1, 0, 3, 22)
 CAMERA_LOG_END_DATETIME_ENERGY_CENTER = datetime.datetime(2077, 6, 20, 23, 59, 59)
-CAMERA_LOG_EXP_SCALE_1 = 600
-CAMERA_LOG_EXP_SCALE_2 = 60000
+CAMERA_LOG_EXP_SCALE_NORMAL = 600
+CAMERA_LOG_EXP_SCALE_ENERGY_CENTER = 60000
+MINIMUM_TIME_IN_ENERGY_CENTER = 1000
+TIME_IN_ENERGY_CENTER_LOC = 48000
+TIME_IN_ENERGY_CENTER_SCALE = 16000
+
+# Normal camera logs without energy center
 camera_logs = []
 id = 1
 log_time = CAMERA_LOG_START_DATETIME
@@ -297,9 +315,13 @@ while log_time < CURRENT_DATETIME:
             datetime=log_time,
         )
     )
+    log_time += datetime.timedelta(seconds=random_exp(CAMERA_LOG_EXP_SCALE_NORMAL))
     id += 1
-    log_time += datetime.timedelta(seconds=random_exp(CAMERA_LOG_EXP_SCALE_1))
+print("Number of normal camera logs without energy center:", id - 1)
+
+# Normal camera logs with energy center
 log_time = CAMERA_LOG_START_DATETIME
+n_camera_logs_with_energy_center = 0
 while log_time < CAMERA_LOG_END_DATETIME_ENERGY_CENTER:
     citizen_captured = citizens[rng.integers(len(citizens))]["id"]
     camera_logs.extend(
@@ -314,33 +336,94 @@ while log_time < CAMERA_LOG_END_DATETIME_ENERGY_CENTER:
                 citizen_id=citizen_captured,
                 datetime=log_time
                 + datetime.timedelta(
-                    seconds=np.max([1000, rng.normal(loc=48000, scale=16000)])
+                    seconds=np.max(
+                        [
+                            MINIMUM_TIME_IN_ENERGY_CENTER,
+                            rng.normal(
+                                loc=TIME_IN_ENERGY_CENTER_LOC,
+                                scale=TIME_IN_ENERGY_CENTER_SCALE,
+                            ),
+                        ]
+                    )
                 ),
             ),
         ]
     )
-    id += 1
-    log_time += datetime.timedelta(seconds=random_exp(CAMERA_LOG_EXP_SCALE_2))
+    log_time += datetime.timedelta(
+        seconds=random_exp(CAMERA_LOG_EXP_SCALE_ENERGY_CENTER)
+    )
+    id += 2
+    n_camera_logs_with_energy_center += 2
+print(
+    "Number of normal camera logs with energy center:", n_camera_logs_with_energy_center
+)
 camera_logs_pd = pd.DataFrame(data=camera_logs)
+
+# Special camera logs
 special_camera_logs_pd = read_seed("special_camera_logs.csv")
+print("Number of special camera logs:", special_camera_logs_pd.shape[0])
 camera_logs_pd = pd.concat([camera_logs_pd, special_camera_logs_pd], ignore_index=True)
 camera_logs_pd.astype({"datetime": str})
 camera_logs_pd.sort_values(by="datetime", ignore_index=True, inplace=True)
 camera_logs_pd["id"] = np.arange(camera_logs_pd.shape[0]) + 1
+
+# Save & print
 save_table(camera_logs_pd, "camera_logs.csv")
 print("Number of camera logs:", camera_logs_pd.shape[0])
+print("")
 
 # ======================================
 # === Create system_audits_inner.csv ===
 # ======================================
 
-system_audits_inner = generate_all_system_audits_inner()
+DEPTH_TREE = 4
+NUM_CHILD_NODE = [2, 3, 2, 3]
+N = 1 + sum(math.prod(NUM_CHILD_NODE[:i]) for i in range(1, DEPTH_TREE + 1))
+MIN_RANDOM_BASE64_LEN = 60
+MAX_RANDOM_BASE64_LEN = 180
+
+print("Number of audits trees:", system_audits_pd.shape[0])
+print("Number of nodes in each audits tree:", N)
+
+# Hierarchy
+parent = np.zeros(N, dtype=int)
+parent[0] = -1
+idx = 0
+
+
+def dfs(step, current):
+    global idx
+    if step == DEPTH_TREE:
+        return
+    for _ in range(NUM_CHILD_NODE[step]):
+        idx += 1
+        parent[idx] = current
+        dfs(step + 1, idx)
+
+
+dfs(0, 0)
+
+# System audits inner
+system_audits_inner = []
+for id, parent_id in enumerate(parent):
+    for i in range(system_audits_pd.shape[0]):
+        system_audits_inner.append(
+            {
+                "id": id * 100 + i,
+                "parent_id": parent_id * 100 + i if parent_id >= 0 else -2,
+                "content": random_base64(
+                    min_len=MIN_RANDOM_BASE64_LEN, max_len=MAX_RANDOM_BASE64_LEN
+                ),
+            }
+        )
 system_audits_inner_pd = pd.DataFrame(system_audits_inner)
 system_audits_inner_pd.astype({"parent_id": int})
 system_audits_inner_pd["id"] += 1
 system_audits_inner_pd["parent_id"] += 1
-system_audits_inner_pd.iloc[:91, system_audits_inner_pd.columns.get_loc("sha-256")] = (
-    system_audits_pd["content"].values
-)
+system_audits_inner_pd.iloc[
+    : system_audits_pd.shape[0], system_audits_inner_pd.columns.get_loc("content")
+] = system_audits_pd["content"].values
+
+# Save & print
 save_table(system_audits_inner_pd, "system_audits_inner.csv")
 print("Number of inner system audits:", system_audits_inner_pd.shape[0])
