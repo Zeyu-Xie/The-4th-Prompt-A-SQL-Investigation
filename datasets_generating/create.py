@@ -283,6 +283,7 @@ print("Number of normal taxi logs:", taxi_logs_pd.shape[0])
 # Special taxi logs
 special_taxi_logs_pd = read_seed("special_taxi_logs.csv")
 special_taxi_logs_pd = special_taxi_logs_pd.astype({"citizen_id": str})
+print("Number of special taxi logs:", special_taxi_logs_pd.shape[0])
 taxi_logs_pd = pd.concat([taxi_logs_pd, special_taxi_logs_pd], ignore_index=True)
 taxi_logs_pd = taxi_logs_pd.astype({"trip_time": str})
 taxi_logs_pd.sort_values(by="trip_time", ignore_index=True, inplace=True)
