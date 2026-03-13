@@ -4,6 +4,7 @@ import glob
 import os
 
 # Parameters
+SEEDS_DIR = os.path.join(os.path.dirname(__file__), "seeds")
 TABLE_DIR = os.path.join(os.path.dirname(__file__), "tables")
 DB_DIR = os.path.join(os.path.dirname(__file__), "dbs")
 DB_PATH = os.path.join(DB_DIR, "OSIRIS.db")
@@ -36,9 +37,25 @@ print("")
 # Check loading result
 cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
 tables = cursor.fetchall()
-print(f"Loading finished. There are {len(tables)} tables in the database. ")
+print(f"Loaded {len(tables)} tables in the database. ")
 for table in tables:
     print(f"- {table[0]}")
+print("")
+
+# Create other tables
+with open(os.path.join(SEEDS_DIR, "creatings.sql"), "r") as f:
+    creatings_sql = f.read()
+cursor.executescript(creatings_sql)
+print("Created other tables. ")
+print("")
+
+# Load triggers
+with open(os.path.join(SEEDS_DIR, "triggers.sql"), "r") as f:
+    triggers_sql = f.read()
+cursor.executescript(triggers_sql)
+print("Triggers loaded. ")
+print("")
 
 # Close
 conn.close()
+print("Loading all finished. ")
