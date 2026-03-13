@@ -66,7 +66,7 @@ def random_base64(min_len: int, max_len: int) -> str:
 # === Create citizens.csv ===
 # ===========================
 
-NUM_CITIZENS_NORMAL = 10000
+NUM_CITIZENS_NORMAL = 186377
 
 # Normal citizens
 citizens = [
@@ -116,7 +116,7 @@ print("")
 # =============================
 
 GUARD_LOG_START_DATETIME = datetime.datetime(2070, 1, 1, 0, 0, 44)
-GUARD_LOG_EXP_SCALE = 12000
+GUARD_LOG_EXP_SCALE = 500
 
 # Normal guard logs
 guard_logs = []
@@ -144,9 +144,9 @@ print("")
 # === Create card_swipes.csv ===
 # ==============================
 
-CARD_SWIPE_START_DATETIME = datetime.datetime(2070, 1, 1, 6, 31, 29)
-CARD_SWIPE_EXP_SCALE = 864
-NUM_CITIZEN_PERMITTED = 200
+CARD_SWIPE_START_DATETIME = datetime.datetime(2070, 1, 1, 0, 7, 29)
+CARD_SWIPE_EXP_SCALE = 185
+NUM_CITIZEN_PERMITTED = 233
 MAYER_ID = "202703042077"
 
 # Citizen permitted
@@ -261,7 +261,7 @@ print("")
 # ============================
 
 TAXI_LOG_START_DATETIME = datetime.datetime(2077, 1, 1, 0, 5, 32)
-TAXI_LOG_EXP_SCALE = 600
+TAXI_LOG_EXP_SCALE = 10
 
 # Normal taxi logs
 taxi_logs = []
@@ -278,13 +278,28 @@ while log_time < CURRENT_DATETIME:
     log_time += datetime.timedelta(seconds=random_exp(TAXI_LOG_EXP_SCALE))
     id += 1
 taxi_logs_pd = pd.DataFrame(data=taxi_logs)
+print("Number of normal taxi logs:", taxi_logs_pd.shape[0])
 
 # Special taxi logs
 special_taxi_logs_pd = read_seed("special_taxi_logs.csv")
+print("Number of special taxi logs:", special_taxi_logs_pd.shape[0])
 taxi_logs_pd = pd.concat([taxi_logs_pd, special_taxi_logs_pd], ignore_index=True)
 taxi_logs_pd = taxi_logs_pd.astype({"trip_time": str})
 taxi_logs_pd.sort_values(by="trip_time", ignore_index=True, inplace=True)
 taxi_logs_pd["trip_id"] = np.arange(taxi_logs_pd.shape[0])
+
+# Remove special citizens' later taxi logs
+merged = taxi_logs_pd.merge(
+    special_taxi_logs_pd[["citizen_id", "trip_time"]],
+    on="citizen_id",
+    how="left",
+    suffixes=("", "_special"),
+)
+to_remove = (merged["trip_time_special"].notna()) & (
+    merged["trip_time"] > merged["trip_time_special"]
+)
+print("Number of illegal taxi logs removed:", to_remove[to_remove == True].shape[0])
+taxi_logs_pd = taxi_logs_pd[~to_remove.values].copy()
 
 # Save & print
 save_table(taxi_logs_pd, "taxi_logs.csv")
@@ -296,9 +311,9 @@ print("")
 # ==============================
 
 CAMERA_LOG_START_DATETIME = datetime.datetime(2077, 1, 1, 0, 3, 22)
-CAMERA_LOG_END_DATETIME_ENERGY_CENTER = datetime.datetime(2077, 6, 20, 23, 59, 59)
-CAMERA_LOG_EXP_SCALE_NORMAL = 600
-CAMERA_LOG_EXP_SCALE_ENERGY_CENTER = 60000
+CAMERA_LOG_END_DATETIME_ENERGY_CENTER = datetime.datetime(2077, 6, 19, 23, 59, 59)
+CAMERA_LOG_EXP_SCALE_NORMAL = 20
+CAMERA_LOG_EXP_SCALE_ENERGY_CENTER = 6000
 MINIMUM_TIME_IN_ENERGY_CENTER = 1000
 TIME_IN_ENERGY_CENTER_LOC = 48000
 TIME_IN_ENERGY_CENTER_SCALE = 16000
