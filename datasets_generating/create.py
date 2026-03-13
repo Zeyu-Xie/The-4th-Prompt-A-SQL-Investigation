@@ -445,6 +445,23 @@ save_table(system_audits_inner_pd, "system_audits_inner.csv")
 print("Number of inner system audits:", system_audits_inner_pd.shape[0])
 print("")
 
+# ============================
+# === Create addresses.csv ===
+# ============================
+
+addresses_pd = read_seed("special_addresses.csv")
+save_table(addresses_pd, "addresses.csv")
+print("Number of addresses:", addresses_pd.shape[0])
+print("")
+
+# =========================
+# === Create camera.csv ===
+# =========================
+
+cameras_pd = read_seed("cameras.csv")
+save_table(cameras_pd, "cameras.csv")
+print("Number of cameras:", cameras_pd.shape[0])
+
 # ==================================
 # === Create safety_controls.csv ===
 # ==================================

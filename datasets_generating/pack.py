@@ -15,6 +15,9 @@ if not os.path.exists(TABLE_DIR):
 if not os.path.exists(DB_DIR):
     print(f"Creating database dir {DB_DIR}... ")
     os.mkdir(DB_DIR)
+if os.path.exists(DB_PATH):
+    print(f"Removing {DB_PATH}... ")
+    os.remove(DB_PATH)
 csv_files = glob.glob(pathname="*.csv", root_dir=TABLE_DIR)
 print("")
 
