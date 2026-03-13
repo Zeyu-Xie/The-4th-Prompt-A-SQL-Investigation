@@ -443,3 +443,12 @@ system_audits_inner_pd.iloc[
 # Save & print
 save_table(system_audits_inner_pd, "system_audits_inner.csv")
 print("Number of inner system audits:", system_audits_inner_pd.shape[0])
+print("")
+
+# ==================================
+# === Create safety_controls.csv ===
+# ==================================
+
+safety_controls_pd = read_seed("safety_controls.csv")
+save_table(safety_controls_pd, "safety_controls.csv")
+print("Number of safety control policies:", safety_controls_pd.shape[0])

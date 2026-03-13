@@ -1,0 +1,4 @@
+key,value
+ALLOW_INSERT,False
+ALLOW_UPDATE,False
+ALLOW_DELETE,False
