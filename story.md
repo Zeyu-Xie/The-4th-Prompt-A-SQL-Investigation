@@ -132,6 +132,74 @@ I needed space to think. I slipped out the heavy oak doors and headed straight f
 
 ## Chapter 3: The 4th Prompt
 
+Leaning against the railing, the cold city wind whipping across my face, I ran the logic through my head. The robot guards were nothing but glorified appendages; they didn't possess the autonomy to simply ignore a direct command from O-AI. Could the super-brain itself have gone rogue and violated its foundational prompts? It was possible, but the probability hovered near absolute zero.
+
+No, the timing was far too perfect to be a machine anomaly. The boy's death occurred on the exact same day—just hours after—Harrington and his inner circle injected their three new, overarching prompts into the system at noon. I couldn't shake the creeping suspicion that this wasn't a spontaneous glitch in the code. It was a fatal human error.
+
+I pushed off the railing and walked back into the chilled, pressurized air of the executive briefing room. As the heavy oak doors sealed shut behind me, William looked up from his secure comms pad with a tight nod. He had just finished wrestling with the central government bureaucracy, and the clearance had come through. My terminal now had unrestricted, god-level access to every table in the OSIRIS database.
+
+I walked back to my seat and looked directly at the Mayor. "I need to see the table where the quarterly prompts are stored."
+
+Harrington didn't hesitate. "Of course," he replied, his voice heavy with a grim resignation. "Whatever is needed."
+
+I sat down, resting my hands over the keyboard. It was time to see exactly what commands they had fed the beast that afternoon.
+
+```sql
+SELECT
+    COUNT(*)
+FROM
+    system_audits;
+```
+
+I ran the mental arithmetic. Between March 2070 and June 2077, there had been exactly thirty quarterly meetings. At three directives per session, the system should hold exactly ninety records.
+
+But the row count at the bottom of my terminal stared back at me: **91**.
+
+I needed to see if this phantom prompt had been slipped into the system during the chaos of the most recent session.
+
+```sql
+SELECT
+    *
+FROM
+    system_audits
+WHERE
+    log_date >= '2077-06-20';
+```
+
+A frown crept onto my face as the query rendered. The log showed that during the noon session, *four* prompts had been uploaded—and the text of the final one was a garbled, unreadable mess of characters.
+
+"No," the Mayor said, leaning over my shoulder, his voice hard with absolute certainty. "We didn't add this."
+
+Kenneth suddenly stepped closer, his eyes narrowing at the screen. "Adrian, can you verify the SHA-256 hash of that last entry?"
+
+"I can," I replied, my fingers already flying across the mechanical keys. "Just give me a second to import the cryptography extension."
+
+```sql
+-- Download "sqlean" from https://github.com/nalgeon/sqlean/releases
+SELECT
+    load_extension ('<path-of-crypto-script>');
+```
+
+With the module successfully loaded into the terminal environment, the `crypto_sha256` function was live and ready to tear the corrupted data apart.
+
+```sql
+SELECT
+    content,
+    lower("SHA-256") AS sha256_written,
+    lower(hex (crypto_sha256 (content))) AS sha256_computed,
+    is_flag_hidden
+FROM
+    system_audits
+WHERE
+    sha256_written != sha256_computed;
+```
+
+The terminal blinked, outputting the result. A cold thrill ran down my spine. "You're right, Kenneth," I murmured, staring at the mismatched alphanumeric string. "It doesn't fit."
+
+It didn't fit at all. Harrington's elite municipal tech team didn't make amateur mistakes like a broken hash string. And O-AI? The super-brain was computationally incapable of generating an incorrect SHA-256 value.
+
+The conclusion was as inescapable as it was terrifying: someone outside this room had breached the highest level of the city's architecture, silently updating the core prompt table while the rest of OSIRIS looked the other way.
+
 ## Chapter 4: Sacrifice of efficiency
 
 ## Chapter 5: The Taxi to the Hell
