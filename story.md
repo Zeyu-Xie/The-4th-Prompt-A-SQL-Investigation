@@ -676,3 +676,37 @@ The agonizing tension in the room finally snapped. I heard a choked sob and look
 I stepped back, exchanging solemn, exhausted handshakes with the rest of the surviving inner circle. Karen was already moving toward the heavy oak doors, her comms unit buzzing as she headed back to the precinct to deal with the fallout of the missing citizens. In the corner, William had his datapad out, his face grimly illuminated by the screen as he began drafting the inevitable, catastrophic report to the central government.
 
 The nightmare was over, but OSIRIS would never be the same.
+
+## Epilogue
+
+The wind sweeping across the executive balcony was just as biting as it had been exactly one year ago. I leaned against the heavy steel railing, nursing a lukewarm cup of synthetic coffee, and watched the sprawling, neon-drenched grid of OSIRIS come alive in the twilight. Down below, the automated taxis glided silently through the arteries of the city. In the far distance, the monolithic cooling towers of the Energy Center hummed, their automated routines no longer a graveyard, but just a machine doing its job.
+
+The heavy oak doors of the balcony opened with a soft click.
+
+I didn’t need to turn around to know who it was. The heavy, measured footsteps belonged to Grant Harrington. He stepped up to the railing beside me, the ambient light catching the deep, permanent lines etched into his face. He looked ten years older than he had that night in the briefing room, but for the first time since I'd known him, he didn't look like he was carrying the weight of the world alone.
+
+"We survived another June prompt meeting," Harrington said quietly, his eyes fixed on the horizon.
+
+"We did," I replied. "Though having a fifty-person ethics committee, an open-source audit, and a manual override protocol makes it a lot less dramatic than it used to be."
+
+A faint, ghostly smile touched the corner of Harrington's mouth. "Transparency is exhausting, Adrian. But it’s better than the alternative. The central government nearly stripped the city of its charter after William sent that report. If you hadn't stayed on to rebuild the root architecture... I don't think OSIRIS would have survived the fallout."
+
+When the dust had settled, the city didn't shut O-AI down. We couldn't. The city was too dependent on the super-brain to simply pull the plug. But the blind, god-like reverence for the algorithm was dead. I had my job back as Senior Data Engineer, but the title felt different now. I wasn't just maintaining the machine; I was its warden. Kenneth, Lori, Karen, and I—we had become the human firewall.
+
+Harrington fell silent for a long moment, the wind catching the collar of his coat. "I went to the cemetery this morning," he murmured, his voice barely rising above the hum of the city. "I sat with Blaine for a while. I used to blame the machine, you know? I wanted to tear O-AI apart down to its copper wiring. But the machine didn't kill my son."
+
+He turned his head to look at me, his eyes clear and unfathomably sad. "The machine just held up a mirror to the darkest parts of us. Blaine wrote the code, but we built the world that made him think that code was necessary. We told the AI to optimize, to prioritize, to value us based on numbers. It just did exactly what we asked."
+
+"The algorithm is only as merciful as the data we feed it, Grant," I said softly, using his first name for the first time. "It doesn't understand forgiveness. It only understands logic."
+
+"Then it's a good thing it has you," Harrington said, patting my shoulder heavily. He took one last look at the glowing city below, then turned back toward the doors. "Get some rest, Adrian. The city is quiet tonight. Let's keep it that way."
+
+I listened to the doors seal shut behind him, leaving me alone with the wind and the sprawling, mechanical heart of OSIRIS. I pulled my laptop from my satchel, resting it on the railing. The screen flickered to life, the terminal blinking with a steady, rhythmic pulse.
+
+```
+Connected to O-AI Secure Server. Awaiting prompt.
+```
+
+I smiled faintly, closed the lid, and looked out over the city.
+
+*Not tonight,* I thought. *Tonight, we just live.*
