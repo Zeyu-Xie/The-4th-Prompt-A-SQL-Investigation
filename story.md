@@ -577,4 +577,102 @@ He slowly raised his head, his eyes locking onto mine, and then shifting to the 
 
 "Adrian. Kenneth. We need to purge that prompt from the mainframe," he commanded, his voice rising to a raw shout. "This is a direct order. Stop it. *Now.*"
 
-## Chapter 9: xxx
+## Chapter 9: The final Restart
+
+Kenneth and I didn't waste another second. We pulled our chairs tight to the master terminal.
+
+"Can we just nuke the prompt directly from the `system_audits` table?" I asked, my fingers already hovering over the keys.
+
+"You could," Kenneth replied, his voice tight. "But it wouldn't matter. It's completely useless."
+
+"Why?"
+
+"Because of the redundancy architecture," he explained, rubbing his temples as if trying to massage the logic into place. "Aside from the automated backups, there's a secondary, deeply buried layer—the `system_audits_inner` table. It doesn't just store the original root prompt. When O-AI digests a directive, it fractures it into dozens of granular sub-prompts to ensure ruthless execution."
+
+Seeing my hesitation, Kenneth unlocked his datapad and quickly sketched out a hierarchical tree structure on the glass.
+
+```mermaid
+flowchart TB
+	O[Be a Good Data Engineer]
+	A[Coding]
+	B[SQL & Data Modeling]
+	C[Distributed Computing]
+	O --- A
+	O --- B
+	O --- C
+```
+
+"Think of it like this. If the root node is 'be a good data engineer,' the system spawns multiple leaf nodes—the sub-prompts—detailing exactly *how* to do that." He tapped the stylus against the screen. "And that leaves us staring down three massive roadblocks. First, this malicious prompt tree is deep; we're talking at least four levels of nested logic. Second, every single sub-prompt in that inner table is protected by quantum encryption. And third... thanks to the system's lockdown mechanism, we only get *one* shot. We can only manipulate the tables once before the failsafe seals us out."
+
+Silence fell between us for a long, agonizing minute. I stared at the dark screen, the variables clicking together in my mind until the solution crystallized.
+
+"An order is an order," I said, my voice hardening. "The encryption is a nightmare, and the tree is a mess. But don't forget who you're talking to, Kenneth. I didn't get the 'Senior' title just by warming a chair."
+
+Kenneth let out a breath that was half-laugh, half-sigh. "I trust you, Adrian. I've never doubted your talent. Just... be careful."
+
+He reached over, entering his god-level municipal credentials to bypass the final barrier, unlocking my administrative permissions.
+
+```sql
+UPDATE safety_controls
+SET
+    value = 1
+WHERE
+    key = 'ALLOW_DELETE';
+```
+
+"The floor is yours, Adrian," Kenneth whispered.
+
+I had written thousands of lines of code in my life, but this was the first time I could actually feel a cold sweat dripping down my spine as I typed. I needed a recursive query—something that would hunt down the root and mercilessly sever every single branch attached to it in one fluid, inescapable motion.
+
+```sql
+-- Delete original prompt
+DELETE FROM system_audits_inner
+WHERE
+    system_audits_inner.id IN (
+        SELECT
+            id
+        FROM
+            malicious_audits
+    );
+
+-- Delete malicious prompts recursively
+WITH RECURSIVE
+    malicious_audits AS (
+        SELECT
+            id,
+            parent_id,
+            content
+        FROM
+            system_audits_inner
+        WHERE
+            id = 91
+        UNION ALL
+        SELECT
+            s.id,
+            s.parent_id,
+            s.content
+        FROM
+            system_audits_inner s
+            JOIN malicious_audits m ON s.parent_id = m.id
+    )
+DELETE FROM system_audits_inner
+WHERE
+    system_audits_inner.id IN (
+        SELECT
+            id
+        FROM
+            malicious_audits
+    );
+```
+
+I slammed the enter key.
+
+The terminal paused, the cursor blinking in the dark abyss for what felt like an eternity. Then, it returned a successful execution code. I had done it. In two decisive statements, the entire parasitic tree of malicious commands was eradicated from the super-brain.
+
+The agonizing tension in the room finally snapped. I heard a choked sob and looked over to see Mayor Harrington violently weeping, the dam of his composure completely broken. I stood up, walked over, and pulled the devastated man into a heavy, silent embrace.
+
+"It's done, sir," I told him quietly. "Without a doubt. It's completely gone."
+
+I stepped back, exchanging solemn, exhausted handshakes with the rest of the surviving inner circle. Karen was already moving toward the heavy oak doors, her comms unit buzzing as she headed back to the precinct to deal with the fallout of the missing citizens. In the corner, William had his datapad out, his face grimly illuminated by the screen as he began drafting the inevitable, catastrophic report to the central government.
+
+The nightmare was over, but OSIRIS would never be the same.
