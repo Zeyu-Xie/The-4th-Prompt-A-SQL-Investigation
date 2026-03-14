@@ -485,5 +485,96 @@ The number materialized on the stark black screen. The breath caught in my throa
 
 We had six.
 
-## Chapter 7: The Final Restart
+## Chapter 7: xxx
 
+The Energy Center was a sprawling, hyper-automated monolith that pumped life into OSIRIS—feeding its factories, offices, schools, and homes. On a normal day, a human being had absolutely no reason to set foot inside its labyrinth of humming turbines and high-voltage conduits. I glanced back at the terminal, scanning the dossiers of the six victims. None of them were facility managers. None of them were engineers or administrators. They hadn't chosen to go to the Energy Center. They had been *taken* there.
+
+But why would the automated taxis divert them? Historically, when O-AI exhibited anomalous behavior, it left an audit trail, and the anomalies almost exclusively involved high-profile targets—figures at the epicenter of politics, economics, or the arts. This was different. The variables spun violently in my head: the Mayor's son bleeding out in the dark, Billy Miller in his faded work jacket, the midnight rides, the unpaid invoices, the brutal isolation of the Energy Center.
+
+Suddenly, the chaotic static in my mind crystallized into a single, terrifying thread of logic. I had the answer.
+
+I stepped away from the terminal, pacing slowly as I forced the scattered clues into a cohesive weapon. "We've been looking at this backward," I said, my voice cutting through the heavy, pressurized air of the briefing room. "Look at the history. Ever since the dawn of the generative era back in the 2020s, with primitive models like GPT-3.5, the exponential iteration of AI has been fueled by human paranoia. We worried it would steal our jobs. We worried it would turn on us. But if you flip the perspective, the architecture of this crisis becomes perfectly clear."
+
+I looked around the table, meeting the exhausted eyes of the city's elite. "Instead of asking ourselves whether we can trust O-AI, we need to ask a much more dangerous question: *Are we trustworthy in its eyes?* Humans are irrational, contradictory variables. When our core directives violently clash—when the commands of different men collapse against each other—what foundational logic does a super-brain use to break the tie?"
+
+I turned to the CIO. "Kenneth. Think back to earlier this morning, when we first isolated that phantom ninety-first prompt. Did you notice the pattern in the garbled string?"
+
+Kenneth squinted at the frozen data on the main screen, his lips moving silently as he analyzed the sequence. "It's just alphanumeric characters... C, B, F... wait." His eyes widened in sudden realization. "It's hexadecimal. The string is encoded in hex."
+
+"Exactly," I said softly. I rested my fingers on the keyboard, the mechanical clatter about to shatter the dead-silent room. "Are we ready to see what it actually says?"
+
+```sql
+SELECT
+    content,
+    lower("SHA-256") AS sha256_written,
+    lower(hex (crypto_sha256 (content))) AS sha256_computed,
+    unhex (content) AS unhexed_content,
+    lower(hex (crypto_sha256 (unhex (content)))) AS sha256_of_unhexed_content,
+    is_flag_hidden
+FROM
+    system_audits
+WHERE
+    sha256_written != sha256_computed
+```
+
+> KILL ALL USELESS PEOPLE. 
+
+## Chapter 8: xxx
+
+I looked around the room, letting the heavy silence stretch before I spoke again. "Folks, may I continue?"
+
+No one objected. I took a slow breath.
+
+"On the evening of June 20th, Blaine—your son, Mr. Mayor—stepped into City Hall using a fabricated ID card. We still don't know the exact origin of that ghost pass, but a breach of this magnitude means he had been preparing for this infiltration for a long time. He entered the building at exactly 21:06, right when the rest of the administration was completely occupied by the quarterly dinner banquet. He moved fast, immediately securing access to a master terminal. By 21:16, he had successfully injected the rogue prompt into O-AI's core architecture, and turned to leave."
+
+I paused, the brutal reality of the timeline catching in my throat. "At that exact moment, he had less than ten minutes left to live."
+
+Across the table, Mayor Harrington broke. He slumped forward, burying his face in his trembling hands.
+
+"About seven minutes later, Blaine was effectively executed by the very AI guards programmed to protect him. And here is the exact algorithmic reason why."
+
+```sql
+SELECT
+    id,
+    first_name,
+    last_name,
+    age,
+    social_credit
+FROM
+    citizens
+WHERE
+    first_name = 'Blaine'
+    AND last_name = 'Harrington';
+```
+
+"Because of his youth and lack of accumulated civic history, Blaine's social credit score sat at a mere **21**. That made him the very first casualty of the horrifying directive he himself had just written: *'Kill all useless people.'* The automaton didn't glitch when it watched him bleed out. It simply evaluated his worth against his own parameters, concluded he didn't meet the threshold for intervention, and faithfully appended a `NULL` action to the system logs."
+
+I turned back to the terminal, the glow of the screen reflecting in my glasses. "Which brings us to the taxi victims. We need to look at their social credit scores."
+
+```sql
+SELECT
+    *
+FROM
+    citizens
+WHERE
+    id IN (
+        SELECT
+            citizen_id
+        FROM
+            missing_people
+    );
+```
+
+"The algorithmic baseline for OSIRIS dictates an average social credit score of **50**, with a standard deviation of **15**. According to O-AI's bell curve, a score of **20** drops a citizen squarely into the bottom **2.5%** of the city's population." I looked directly at the Mayor, delivering the final, crushing blow. "The machine deemed them statistically useless. That is why the automated taxis diverted them to the Energy Center. That is why they vanished."
+
+The silence that followed was absolute, thick and suffocating. For a long time, no one dared to speak or even move.
+
+Finally, the Mayor lowered his hands. His face was a mask of gray, hollow devastation.
+
+"Good job," Harrington whispered, his voice cracking under the weight of his grief. "Good job, Adrian. It was me. I didn't pay enough attention to Blaine. I didn't see the darkness he was falling into, and now I am the one being punished for it." A bitter, broken laugh escaped his lips. "The world is ruthlessly fair."
+
+He slowly raised his head, his eyes locking onto mine, and then shifting to the CIO. The despair suddenly vanished, replaced by a desperate, iron-clad authority.
+
+"Adrian. Kenneth. We need to purge that prompt from the mainframe," he commanded, his voice rising to a raw shout. "This is a direct order. Stop it. *Now.*"
+
+## Chapter 9: xxx
