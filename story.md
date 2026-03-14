@@ -101,8 +101,10 @@ SELECT
 FROM
     guard_logs
 WHERE
-    80.616667 <= lon <= 80.62
-    AND 28.541667 <= lat <= 28.544167; 
+    80.616667 <= lon
+    AND lon <= 80.62
+    AND 28.541667 <= lat
+    AND lat <= 28.544167;
 ```
 
 "What kind of parameters are we looking at for the `event_type` and `action_taken` columns?" I asked, keeping my eyes locked on the glowing schematics.
@@ -117,8 +119,10 @@ SELECT
 FROM
     guard_logs
 WHERE
-    80.616667 <= lon <= 80.62
-    AND 28.541667 <= lat <= 28.544167
+    80.616667 <= lon
+    AND lon <= 80.62
+    AND 28.541667 <= lat
+    AND lat <= 28.544167
     AND action_taken IS NULL;
 ```
 
@@ -485,7 +489,7 @@ The number materialized on the stark black screen. The breath caught in my throa
 
 We had six.
 
-## Chapter 7: xxx
+## Chapter 7: Unhexed
 
 The Energy Center was a sprawling, hyper-automated monolith that pumped life into OSIRIS—feeding its factories, offices, schools, and homes. On a normal day, a human being had absolutely no reason to set foot inside its labyrinth of humming turbines and high-voltage conduits. I glanced back at the terminal, scanning the dossiers of the six victims. None of them were facility managers. None of them were engineers or administrators. They hadn't chosen to go to the Energy Center. They had been *taken* there.
 
@@ -519,7 +523,7 @@ WHERE
 
 > KILL ALL USELESS PEOPLE. 
 
-## Chapter 8: xxx
+## Chapter 8: Statistically Useless
 
 I looked around the room, letting the heavy silence stretch before I spoke again. "Folks, may I continue?"
 
