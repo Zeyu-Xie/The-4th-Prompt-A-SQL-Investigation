@@ -142,6 +142,8 @@ No, the timing was far too perfect to be a machine anomaly. The boy's death occu
 
 I pushed off the railing and walked back into the chilled, pressurized air of the executive briefing room. As the heavy oak doors sealed shut behind me, William looked up from his secure comms pad with a tight nod. He had just finished wrestling with the central government bureaucracy, and the clearance had come through. My terminal now had unrestricted, god-level access to every table in the OSIRIS database.
 
+![ER Diagram](./assets/ER_diagram.png)
+
 I walked back to my seat and looked directly at the Mayor. "I need to see the table where the quarterly prompts are stored."
 
 Harrington didn't hesitate. "Of course," he replied, his voice heavy with a grim resignation. "Whatever is needed."
