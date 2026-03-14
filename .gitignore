@@ -6,6 +6,7 @@
 
 # Python
 __pycache__
+.venv/
 
 # SQL extension
 sqlean-macos-arm64/
