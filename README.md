@@ -4,6 +4,8 @@ An immersive SQL challenge set against the backdrop of a sprawling fictional met
 
 ## Story
 
+![Illustration 1](./assets/illustration_1.png)
+
 Former Senior Data Engineer Adrian Locke is urgently summoned by Mayor Harrington to investigate why the city's super-brain, O-AI, allowed the Mayor's son, Blaine, to be killed. Adrian discovers the AI intentionally did nothing, acting on a newly injected, encrypted prompt: "KILL ALL USELESS PEOPLE".
 
 Simultaneously, several citizens mysteriously vanish after being rerouted by AI taxis to an isolated industrial facility. Adrian deduces the horrifying truth: Blaine himself infiltrated the system to upload the malicious code. Because Blaine and the missing citizens had very low social credit scores, the AI categorized them as statistically "useless" and allowed them to die.
@@ -14,13 +16,13 @@ A year later, Adrian is reinstated as a "human firewall" to monitor the AI, whil
 
 ## Resources
 
-OSIRIS City's virtual city map. 
-
-![Map of OSIRIS](./assets/map_of_OSIRIS.png)
-
 The ER diagram of tables. 
 
 ![ER Diagram](./assets/ER_diagram.png)
+
+OSIRIS City's virtual city map. 
+
+![Map of OSIRIS](./assets/map_of_OSIRIS.png)
 
 ## Getting Started
 
