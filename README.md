@@ -93,17 +93,21 @@ The data generation pipeline relies on a combination of stochastic processes, te
 ### 1. Population Scale and Selection Probability
 
 The simulation grounds its events in a baseline citizen pool, denoted as $P_{\text{base}} = 186,377$. For routine city events (e.g., taxi rides, standard camera sightings), the participating citizen is selected uniformly at random. The probability $P(C_i)$ of any specific citizen $i$ triggering a standard event at a given timestamp is:
+
 $$
 P(C_i) = \frac{1}{P_{\text{base}}}
 $$
+
 However, access-restricted events (Card Swipes) target a heavily filtered sub-population. The simulation restricts access to $N_{\text{permit}} = 234$ individuals (233 citizens with a social credit > 50, plus the Mayer). This isolates restricted movements to a fractional elite representing approximately **0.125%** of the total population.
 
 ### 2. Temporal Event Volumes (Poisson Point Processes)
 
 Most system logs are modeled as Poisson point processes, where the continuous time interval between consecutive events follows an exponential distribution. Let $T_{\text{total}}$ represent the total elapsed time in seconds for a specific simulation phase, and $\beta$ represent the scale parameter (mean seconds between events). The expected total number of generated records, $E[N]$, over a given period is:
+
 $$
 E[N] = \frac{T_{\text{total}}}{\beta}
 $$
+
 By computing the exact time deltas between the defined start dates and the `CURRENT_DATETIME` (June 28, 2077), we can model the expected data volume for each table:
 
 - **Long-Term Phase (Jan 1, 2070 – Jun 28, 2077):**
@@ -125,9 +129,11 @@ By computing the exact time deltas between the defined start dates and the `CURR
 The Energy Center anomaly injects grouped pairs of camera logs (entry and exit). Events trigger with a sparse scale of $\beta = 6000$ over a 169-day window (ending June 19, 2077).
 
 When a citizen enters, their duration $\Delta t_{\text{stay}}$ is determined by a bounded Gaussian (normal) distribution to simulate human dwell time:
+
 $$
 \Delta t_{\text{stay}} = \max\left(t_{\text{min}}, \mathcal{N}(\mu, \sigma^2)\right)
 $$
+
 With $\mu = 48,000$ (approx. 13.3 hours), $\sigma = 16,000$ (approx. 4.4 hours), and a hard minimum threshold $t_{\text{min}} = 1,000$ seconds (approx. 16.6 minutes). This ensures that ~99.7% of stays fall between 0 and 26.6 hours, organically modeling working shifts or prolonged detentions.
 
 ### 4. Hierarchical Audit Tree Growth
@@ -137,9 +143,11 @@ The internal system audits (`system_audits_inner.csv`) are mapped as an $n$-ary 
 - **Root Nodes:** 30 quarterly meetings $\times$ 3 prompts = 90 root nodes.
 
 - **Tree Topology:** The depth is strictly $D = 4$, with a branching array $C = [2, 3, 2, 3]$. The total node count $N_{\text{nodes}}$ generated per root is computed iteratively:
+
   $$
   N_{\text{nodes}} = 1 + \sum_{i=1}^{D} \prod_{j=1}^{i} C_j
   $$
+  
   Calculating the specific constants: $1 + (2) + (2 \times 3) + (2 \times 3 \times 2) + (2 \times 3 \times 2 \times 3) = 1 + 2 + 6 + 12 + 36 = \textbf{57 nodes per tree}$.
 
   Across 90 root meetings, this deterministic model guarantees exactly **5,130** cryptographically obfuscated inner audit logs.
