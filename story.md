@@ -202,9 +202,133 @@ The conclusion was as inescapable as it was terrifying: someone outside this roo
 
 ## Chapter 4: Sacrifice of efficiency
 
+"City Hall is a fortress. No one gets through the perimeter without a registered ID card," Lori stated, her arms crossed tight. "We are looking at a pool of roughly two hundred cleared personnel."
+
+"What about a remote breach?" I asked, looking between them. "Could someone have tunneled into the database from the outside?"
+
+Kenneth shook his head, his expression grim. "Impossible. O-AI sits inside a Virtual Private Cloud, isolated twenty-four-seven. The firewalls are subjected to manual audits every single day. Our Identity and Access Management protocols strictly whitelist only the physical terminals bolted to the floor inside this building. On top of that, the database itself is locked down by elite Key Management Services, mandating SSL/TLS encrypted handshakes for every connection. I refuse to believe anyone could slice through all those layers of armor without triggering a dozen alarms."
+
+I digested the technical reality. "Which means the threat wasn't remote. The vulnerability walked right through the front door." I looked back at the terminal screen, then up at Lori. "We need to look at the people who entered City Hall that day. Or, more accurately, the specific ID cards that were swiped."
+
+"Exactly," the Mayor murmured, his eyes hardening.
+
+```sql
+SELECT
+    *
+FROM
+    card_swipes
+    LEFT JOIN id_cards ON card_swipes.card_id = id_cards.card_id
+    LEFT JOIN citizens ON citizens.id = id_cards.citizen_id; 
+```
+
+The screen instantly flooded with data, hundreds of rows blurring past in a waterfall of green text. I hit a keystroke to kill the process. No, it was too much noise. The person who slipped that phantom prompt into the mainframe had to be an anomaly. There had to be a flaw in their identity, their clearance...
+
+I paused, staring at the glowing cursor. *Wait. The card.* Why were we blinding ourselves by only looking at the two hundred authorized personnel? What if the intruder was a ghost? Someone holding a fabricated card that the security scanners recognized, but that mapped to no actual human being in the registry?
+
+I cleared the terminal and refined the syntax, hunting for the void in the data.
+
+```sql
+SELECT
+    card_swipes.swipe_id AS swipe_id,
+    card_swipes.card_id AS card_id,
+    card_swipes.datetime AS datetime,
+    id_cards.citizen_id AS citizen_id_on_card,
+    id_cards.is_active AS is_active,
+    citizens.id AS citizen_id_real
+FROM
+    card_swipes
+    LEFT JOIN id_cards ON card_swipes.card_id = id_cards.card_id
+    LEFT JOIN citizens ON citizens.id = id_cards.citizen_id
+WHERE
+    citizen_id_real IS NULL;
+```
+
+A single, glaring row rendered on the black screen.
+
+"Got him!" I shouted, the thrill of the breakthrough spiking my adrenaline. "This has to be our ghost. They bypassed the registry, minted a blank ID, and walked right through City Hall's front doors."
+
+Mayor Harrington stepped close, leaning heavily over my shoulder to peer at the screen. He fixed on the timestamp. "Nine o'clock," he murmured, a cold realization washing over his face. "This person knew our schedules intimately. Do you know why they chose nine in the evening? The entire senior administration was attending the quarterly municipal dinner. The building was practically deserted."
+
+The pieces suddenly, violently snapped together in my mind. I spun my chair around, locking eyes with him. "Was your son invited to that dinner?"
+
+"No," the Mayor replied, his brow furrowing in confusion. "It was strictly limited to official staff and department heads. But why does that..." His voice trailed off, his breath hitching as the horrific implication finally hit him. "Wait—!"
+
 ## Chapter 5: The Taxi to the Hell
 
+The clock on my terminal ticked over to 11:56. The morning had evaporated into a tense blur of keystrokes and decryption, leaving behind a hollow, gnawing ache in my stomach. Before I could even think about stepping away for coffee, a sharp knock echoed across the briefing room.
+
+"Come in," the Mayor called out, his posture stiffening.
+
+The heavy oak doors parted, and a uniformed OSIRIS police officer stepped inside, clutching a secure datapad. "Mr. Mayor," he said, his expression grim. "We just had a strange missing person case come across the wire. I thought it might be relevant."
+
+"Brief us," Harrington commanded.
+
+The officer tapped his screen, casting the official dossier onto the room's main display.
+
+>**MISSING PERSON INCIDENT REPORT**
+>
+>**REPORT ID:** MP-2077-0628-02 **DATE:** June 28, 2077
+>
+>**SUBJECT IDENTIFICATION**
+>
+>- **Name:** Billy Miller
+>- **Physicals:** Age 53, Male, 177cm, 80kg
+>- **Description**: Sandy brown hair, deep blue eyes. No visible marks or tattoos.
+>- **Last Seen Wearing:** A faded navy blue work jacket (canvas, corduroy collar).
+>
+>**INCIDENT SUMMARY**
+>
+>- **Last Seen:** June 24, 2077, 22:55 (Subject's residence)
+>- **Reporting Party:** Cynthia Miller (Daughter)
+>- **Circumstances:** Subject departed to retrieve hardware from a local repair shop. Disappearance is flagged as highly out of character. Subject was traveling via an automated AI taxi.
+>- **Known Medical Issues:** None.
+
+I didn't wait for an invitation. If the man had stepped into an automated municipal vehicle, O-AI had a digital fingerprint of the ride. I turned to my laptop and began querying the master logs.
+
+```sql
+SELECT
+    taxi_logs.trip_id,
+    taxi_logs.citizen_id,
+    taxi_logs.trip_time,
+    citizens.first_name AS first_name,
+    citizens.last_name AS last_name,
+    citizens.age AS age
+FROM
+    taxi_logs
+    LEFT JOIN citizens ON taxi_logs.citizen_id = citizens.id
+WHERE
+    first_name = 'Billy'
+    AND last_name = 'Miller'
+    AND age = 53;
+```
+
+The terminal processed the table join instantly. A single row blinked back at me from the dark screen. "The report is accurate," I announced to the room. "The subject's last logged transit was initiated at 23:06 on the night of the 24th."
+
+Harrington frowned, looking at the officer. "People go missing, Officer. What makes this specific case an anomaly?"
+
+"It's his daughter, sir. Cynthia is adamant that her father wouldn't just vanish off the grid without warning," the officer explained. "And more importantly, he was traveling in an AI taxi. In OSIRIS, that is statistically the safest mode of transportation in existence. They don't just lose passengers."
+
+A sudden discrepancy gnawed at the back of my mind. I looked up from the glowing terminal. "Did the system log a payment from him for the invoice?"
+
+The officer shook his head. "No, he didn't pay. That's another red flag. Cynthia told our dispatch that she ended up clearing the automated invoice remotely when it bounced to her emergency contact file. But the final fare was twenty dollars higher than his usual route."
+
+Another officer appeared at the door while I was thinking. 
+
 ## Chapter 6: The Secret of the Energy Center
+
+I pushed my glasses up the bridge of my nose, the harsh light of the briefing room catching the lenses as the newcomer stepped through the door. I recognized her instantly. Karen Watson. We went way back. She was the heiress to one of the most obscenely wealthy families in OSIRIS, yet here she stood, wearing the heavy tactical gear of a city police officer. Rumor had it she’d scorched the earth with her parents to put on that uniform, a bitter, bridge-burning argument that was still whispered about in elite circles. But that was ancient history. Right now, her expression was all business.
+
+"Mr. Mayor," she began, her voice steady and commanding the room's attention. "While I was auditing my recent casework, I caught an anomaly. A distinct pattern. In the days immediately following the quarterly prompt meeting, we've had at least four separate missing persons reports cross my desk. Every single one of them was last seen entering an automated AI taxi. And every single one of them left an unpaid invoice lingering in the system."
+
+"Make it five," I interjected quietly from my terminal.
+
+Karen whipped her head around to look at me, her eyes widening. "What? Another one just dropped?" She quickly recovered her composure, turning her focus back to Harrington. "Sir, I am profoundly sorry for the loss of your son. I truly am. But we cannot afford tunnel vision. We have a systemic vulnerability bleeding citizens into the dark, and we need to lock onto it right now."
+
+Harrington rubbed his temples, the crushing exhaustion pulling at his features once again. "You're right, Watson," he conceded heavily. He looked across the table at me, his eyes hollow but sharp. "Adrian. Can you cross-reference these cases? Find the connective tissue in the data?"
+
+"Yes, sir," I replied, cracking my knuckles over the keyboard.
+
+Karen stepped up beside my chair, tapping her secure datapad to transfer the files directly to my local drive. A fresh, empty schema materialized on my black screen: the `missing_people` table. It was time to populate the void and see where all these ghosts were going.
 
 ## Chapter 7: The Final Restart
 
