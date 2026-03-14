@@ -27,13 +27,20 @@ conn = sqlite3.connect(DB_PATH)
 cursor = conn.cursor()
 print("")
 
+# Create tables
+with open(os.path.join(SEEDS_DIR, "creatings.sql"), "r") as f:
+    creatings_sql = f.read()
+cursor.executescript(creatings_sql)
+print("Created all tables. ")
+print("")
+
 # Load all csv files
 for i, csv_file in enumerate(csv_files):
     table_path = os.path.join(TABLE_DIR, csv_file)
     table_name = os.path.splitext(csv_file)[0]
     print(f"[{i + 1}/{len(csv_files)}]Loading {table_path} to table [{table_name}]... ")
     df = pd.read_csv(table_path)
-    df.to_sql(table_name, conn, if_exists="replace", index=False)
+    df.to_sql(table_name, conn, if_exists="append", index=False)
     print(f"Successfully loaded {table_name}. ")
 print("")
 
@@ -43,13 +50,6 @@ tables = cursor.fetchall()
 print(f"Loaded {len(tables)} tables in the database. ")
 for table in tables:
     print(f"- {table[0]}")
-print("")
-
-# Create other tables
-with open(os.path.join(SEEDS_DIR, "creatings.sql"), "r") as f:
-    creatings_sql = f.read()
-cursor.executescript(creatings_sql)
-print("Created other tables. ")
 print("")
 
 # Load triggers
