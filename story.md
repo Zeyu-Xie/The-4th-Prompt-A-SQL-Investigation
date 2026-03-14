@@ -493,7 +493,39 @@ We had six.
 
 ## Chapter 7: Unhexed
 
-The Energy Center was a sprawling, hyper-automated monolith that pumped life into OSIRIS—feeding its factories, offices, schools, and homes. On a normal day, a human being had absolutely no reason to set foot inside its labyrinth of humming turbines and high-voltage conduits. I glanced back at the terminal, scanning the dossiers of the six victims. None of them were facility managers. None of them were engineers or administrators. They hadn't chosen to go to the Energy Center. They had been *taken* there.
+The Energy Center was a sprawling, hyper-automated monolith that pumped life into OSIRIS—feeding its factories, offices, schools, and homes. On a normal day, a human being had absolutely no reason to set foot inside its labyrinth of humming turbines and high-voltage conduits. I glanced back at the terminal, scanning the dossiers of the six victims. None of them were facility managers. None of them were engineers or administrators. They hadn't chosen to go to the Energy Center. They had been *taken* there. The `SELECT` results from `camera_logs` further confirms my idea.
+
+```sql
+SELECT
+    t.*,
+    missing_people.first_name,
+    missing_people.last_name
+FROM
+    (
+        SELECT
+            *,
+            ROW_NUMBER() OVER (
+                PARTITION BY
+                    citizen_id
+                ORDER BY
+                    datetime DESC
+            ) as rn
+        FROM
+            camera_logs
+        WHERE
+            citizen_id IN (
+                SELECT
+                    citizen_id
+                FROM
+                    missing_people
+            )
+    ) t
+    LEFT JOIN missing_people ON t.citizen_id = missing_people.citizen_id
+WHERE
+    t.rn = 1
+ORDER BY
+    datetime;
+```
 
 But why would the automated taxis divert them? Historically, when O-AI exhibited anomalous behavior, it left an audit trail, and the anomalies almost exclusively involved high-profile targets—figures at the epicenter of politics, economics, or the arts. This was different. The variables spun violently in my head: the Mayor's son bleeding out in the dark, Billy Miller in his faded work jacket, the midnight rides, the unpaid invoices, the brutal isolation of the Energy Center.
 
@@ -531,7 +563,23 @@ I looked around the room, letting the heavy silence stretch before I spoke again
 
 No one objected. I took a slow breath.
 
-"On the evening of June 20th, Blaine—your son, Mr. Mayor—stepped into City Hall using a fabricated ID card. We still don't know the exact origin of that ghost pass, but a breach of this magnitude means he had been preparing for this infiltration for a long time. He entered the building at exactly 21:06, right when the rest of the administration was completely occupied by the quarterly dinner banquet. He moved fast, immediately securing access to a master terminal. By 21:16, he had successfully injected the rogue prompt into O-AI's core architecture, and turned to leave."
+```sql
+SELECT
+    cl.id,
+    cl.camera_id,
+    cl.citizen_id,
+    cl.datetime,
+    c.first_name,
+    c.last_name,
+FROM
+    camera_logs AS cl
+    LEFT JOIN citizens AS c ON cl.citizen_id = c.id
+WHERE
+    c.first_name = 'Blaine'
+    AND c.last_name = 'Harrington';
+```
+
+"At  of June 20th, Blaine—your son, Mr. Mayor—stepped into City Hall using a fabricated ID card. We still don't know the exact origin of that ghost pass, but a breach of this magnitude means he had been preparing for this infiltration for a long time. He entered the building at exactly 21:06, right when the rest of the administration was completely occupied by the quarterly dinner banquet. He moved fast, immediately securing access to a master terminal. By 21:16, he had successfully injected the rogue prompt into O-AI's core architecture, and turned to leave."
 
 I paused, the brutal reality of the timeline catching in my throat. "At that exact moment, he had less than ten minutes left to live."
 
