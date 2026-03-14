@@ -1,4 +1,4 @@
-# Prologue
+## Prologue
 
 Until three years ago, I held the title of Senior Data Engineer for O-AI, the sprawling, algorithmic super-brain that kept the city of OSIRIS breathing. But like so many others in the bitter stretch of 2074, I found myself abruptly severed from the network, another casualty in a sudden wave of layoffs.
 
@@ -570,7 +570,7 @@ SELECT
     cl.citizen_id,
     cl.datetime,
     c.first_name,
-    c.last_name,
+    c.last_name
 FROM
     camera_logs AS cl
     LEFT JOIN citizens AS c ON cl.citizen_id = c.id
