@@ -330,5 +330,160 @@ Harrington rubbed his temples, the crushing exhaustion pulling at his features o
 
 Karen stepped up beside my chair, tapping her secure datapad to transfer the files directly to my local drive. A fresh, empty schema materialized on my black screen: the `missing_people` table. It was time to populate the void and see where all these ghosts were going.
 
+| ID           | First Name | Last Name | Sex    | Birthday   |
+| ------------ | ---------- | --------- | ------ | ---------- |
+| 202705138264 | Gary       | Smith     | male   | 2027-05-13 |
+| 201604105300 | Tracy      | Cooper    | female | 2016-04-10 |
+| 203312216529 | Peggy      | Giggs     | female | 2033-12-21 |
+| 204205220083 | Joe        | Sullivan  | male   | 2042-05-22 |
+
+```sql
+INSERT INTO
+    missing_people
+VALUES
+    ('202705138264', 'Gary', 'Smith'),
+    ('202311179921', 'Billy', 'Miller'),
+    ('201604105300', 'Tracy', 'Cooper'),
+    ('203312216529', 'Peggy', 'Giggs'),
+    ('204205220083', 'Joe', 'Sullivan');
+```
+
+"I can't insert anything. " I said. "Sorry, it's for safety" Kenneth said, "For safety, we set a trigger to allow or not allow you to insert, update and delete things. "
+
+"I will apply to let you insert" William said, "so just now you can...?" "Use `WITH` clause" I answered. I saw Kenneth clapped his hands quickly for two times. 
+
+```sql
+WITH
+    missing_people (citizen_id, first_name, last_name) AS (
+        VALUES
+            ('202705138264', 'Gary', 'Smith'),
+            ('202311179921', 'Billy', 'Miller'),
+            ('201604105300', 'Tracy', 'Cooper'),
+            ('203312216529', 'Peggy', 'Giggs'),
+            ('204205220083', 'Joe', 'Sullivan')
+    ),
+    ranked_logs AS (
+        SELECT
+            t.*,
+            m.first_name,
+            m.last_name,
+            ROW_NUMBER() OVER (
+                PARTITION BY
+                    t.citizen_id
+                ORDER BY
+                    t.trip_time DESC
+            ) as rn
+        FROM
+            taxi_logs t
+            INNER JOIN missing_people m ON t.citizen_id = m.citizen_id
+    )
+SELECT
+    *
+FROM
+    ranked_logs
+WHERE
+    rn = 1;
+```
+
+"It's a tangled mess of telemetry," I muttered, tilting the laptop screen so Karen could get a better look at the sprawling dataset.
+
+She leaned in, her eyes darting across the glowing rows of alphanumeric code. "Slide left," she ordered, her voice tight with focus. "I need to see the route logs... wait. Stop. Right there."
+
+She tapped her finger against the glass, pointing directly at a single, unassuming column labeled `distance_offset_km`. "Look at this," she said, her tone sharpening. "This has to be the discrepancy between the taxi's requested destination and where the AI actually terminated the ride. Remember the extra twenty bucks Cynthia Miller was charged for her father's missing trip? Four point seven-eight kilometers, multiplied by the city's standard four-dollar-per-kilometer rate. It's twenty dollars, right on the nose."
+
+She turned to look at me, the terrifying implication hanging heavy in the pressurized air of the briefing room. "If my gut is right, Adrian, every single one of these actual drop-off coordinates is going to share a common denominator."
+
+I didn't waste time arguing. I pulled up the city's master `addresses` table and began cross-referencing the anomalous drop-off points from the taxi logs.
+
+```sql
+WITH
+    missing_people (citizen_id, first_name, last_name) AS (
+        VALUES
+            ('202705138264', 'Gary', 'Smith'),
+            ('202311179921', 'Billy', 'Miller'),
+            ('201604105300', 'Tracy', 'Cooper'),
+            ('203312216529', 'Peggy', 'Giggs'),
+            ('204205220083', 'Joe', 'Sullivan')
+    ),
+    ranked_logs AS (
+        SELECT
+            t.*,
+            m.first_name,
+            m.last_name,
+            ROW_NUMBER() OVER (
+                PARTITION BY
+                    t.citizen_id
+                ORDER BY
+                    t.trip_time DESC
+            ) as rn
+        FROM
+            taxi_logs t
+            INNER JOIN missing_people m ON t.citizen_id = m.citizen_id
+    ),
+    addresses_log AS (
+        SELECT
+            actual_dropoff_lon,
+            actual_dropoff_lat,
+            a.address
+        FROM
+            ranked_logs AS r
+            LEFT JOIN addresses AS a ON a.lon_from <= r.actual_dropoff_lon
+            AND r.actual_dropoff_lon <= a.lon_to
+            AND a.lat_from <= r.actual_dropoff_lat
+            AND r.actual_dropoff_lat <= a.lat_to
+        WHERE
+            rn = 1
+    )
+SELECT
+    *
+FROM
+    addresses_log;
+```
+
+The terminal chewed through the geodata and spat out a single, chilling location for every ride.
+
+"The Energy Center," I breathed, staring at the screen. "Every last one of them was diverted to the industrial sector, dropped off at least a full kilometer away from their intended destination."
+
+Before I could dig any deeper, William cleared his throat from the corner of the room. He held up his secure datapad—the encrypted email from the central government had just come through. The final layer of red tape was gone. I now had god-level write-access. I could finally reset the system configurations and run a full insertion query to build out the true scope of the crisis.
+
+```sql
+UPDATE safety_controls
+SET
+    value = 1
+WHERE
+    key = 'ALLOW_INSERT';
+```
+
+"Let's see just how deep this graveyard goes," I muttered, executing the script to find any other victims who matched this exact digital fingerprint.
+
+```sql
+INSERT INTO
+    missing_people (citizen_id, first_name, last_name)
+SELECT
+    tl.citizen_id,
+    c.first_name,
+    c.last_name
+FROM
+    taxi_logs AS tl
+    LEFT JOIN citizens AS c ON tl.citizen_id = c.id
+WHERE
+    tl.distance_offset_km > 1.0
+ORDER BY
+    tl.trip_time;
+```
+
+The database processed the commands, silently reconciling the new parameters. I ran one final, definitive query to pull the total count of the vanished.
+
+```sql
+SELECT
+    *
+FROM
+    missing_people;
+```
+
+The number materialized on the stark black screen. The breath caught in my throat. We didn't have five missing citizens.
+
+We had six.
+
 ## Chapter 7: The Final Restart
 
