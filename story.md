@@ -563,22 +563,6 @@ I looked around the room, letting the heavy silence stretch before I spoke again
 
 No one objected. I took a slow breath.
 
-```sql
-SELECT
-    cl.id,
-    cl.camera_id,
-    cl.citizen_id,
-    cl.datetime,
-    c.first_name,
-    c.last_name
-FROM
-    camera_logs AS cl
-    LEFT JOIN citizens AS c ON cl.citizen_id = c.id
-WHERE
-    c.first_name = 'Blaine'
-    AND c.last_name = 'Harrington';
-```
-
 "At  of June 20th, Blaine—your son, Mr. Mayor—stepped into City Hall using a fabricated ID card. We still don't know the exact origin of that ghost pass, but a breach of this magnitude means he had been preparing for this infiltration for a long time. He entered the building at exactly 21:06, right when the rest of the administration was completely occupied by the quarterly dinner banquet. He moved fast, immediately securing access to a master terminal. By 21:16, he had successfully injected the rogue prompt into O-AI's core architecture, and turned to leave."
 
 I paused, the brutal reality of the timeline catching in my throat. "At that exact moment, he had less than ten minutes left to live."
