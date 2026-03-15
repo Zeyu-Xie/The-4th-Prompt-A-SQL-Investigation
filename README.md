@@ -2,9 +2,20 @@
 
 An immersive SQL challenge set against the backdrop of a sprawling fictional metropolis.
 
+Files and Links: 
+
 - [Story - Markdown Version](./story.md)
+- [Story without Answer - Jupyter Notebook Version](./story_challenge.ipynb)
 - [Story - Jupyter Notebook Version](./story.ipynb)
 - [Dataset - Kaggle](https://www.kaggle.com/datasets/acanxie/the-4th-prompt-a-sql-investigation)
+
+Contents of `README.md`: 
+
+- [Story](#story)
+- [Resources](#resources)
+- [Getting Started](#getting-started)
+- [Data Logic](#data-logic)
+- [Modelling](#modelling)
 
 ## Story
 
